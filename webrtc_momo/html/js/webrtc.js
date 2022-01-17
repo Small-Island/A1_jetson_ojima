@@ -534,8 +534,8 @@ function gameLoop() {
     let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
     let gp = gamepads[0];
     if (gp != null) {
-        let ang = -50*gp.axes[0];
-        let lin = -0.8*gp.axes[3];
+        let ang = -1.0*gp.axes[0];
+        let lin = -1.0*gp.axes[3];
         document.getElementById('leftright').value = ang;
         document.getElementById('leftright_out').innerHTML = ang.toFixed(3);
         document.getElementById('frontrear').value = lin;
