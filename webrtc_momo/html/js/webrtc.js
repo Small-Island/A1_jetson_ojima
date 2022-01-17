@@ -542,7 +542,7 @@ function gameLoop() {
         document.getElementById('forwardSpeed').value = forwardSpeed;
         document.getElementById('forwardSpeed_out').innerHTML = forwardSpeed.toFixed(3);
         document.getElementById('sideSpeed').value = sideSpeed;
-        document.getElementById('sideSpeed_out').innerHTML = forwardSpeed.toFixed(3);
+        document.getElementById('sideSpeed_out').innerHTML = sideSpeed.toFixed(3);
         if (dataChannel != null) {
             dataChannel.send(new TextEncoder().encode("jyja" + rotateSpeed.toFixed(3) + "," + forwardSpeed.toFixed(3) + "," + sideSpeed.toFixed(3) + "\n"));
         }
