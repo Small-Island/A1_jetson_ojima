@@ -17,18 +17,21 @@ int main(int argc, char* argv[]) {
     addr.sin_port = htons(4001);
 
     int fd_read = open("./serial_out", O_RDONLY);
+
     while (1) {
-        int req_size = 100;
+        int req_size = 30;
         char buf_ptr[50];
         int read_size = 0;
+        memset(buf_ptr, 0, sizeof(buf_ptr));
         read_size = read(fd_read, buf_ptr, req_size);
 
         if (read_size < 1) {
             continue;
         }
         buf_ptr[read_size] = '\0';
-        std::string str = std::string(buf_ptr);
-        sendto(sockfd, str.c_str(), str.length(), 0, (struct sockaddr *)&addr, sizeof(addr));
+        // std::string str = std::string(buf_ptr);
+        // printf("%d   %s\n", read_size, buf_ptr);
+        sendto(sockfd, buf_ptr, read_size, 0, (struct sockaddr *)&addr, sizeof(addr));
     }
     close(sockfd);
     return 0;
