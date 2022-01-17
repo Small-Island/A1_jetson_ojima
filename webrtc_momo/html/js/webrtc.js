@@ -534,14 +534,17 @@ function gameLoop() {
     let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
     let gp = gamepads[0];
     if (gp != null) {
-        let ang = -1.0*gp.axes[0];
-        let lin = -1.0*gp.axes[3];
-        document.getElementById('leftright').value = ang;
-        document.getElementById('leftright_out').innerHTML = ang.toFixed(3);
-        document.getElementById('frontrear').value = lin;
-        document.getElementById('frontrear_out').innerHTML = lin.toFixed(3);
+        let rotateSpeed = -1.0*gp.axes[0];
+        let forwardSpeed = -1.0*gp.axes[1];
+        let sideSpeed = -1.0*gp.axes[2];
+        document.getElementById('rotateSpeed').value = rotateSpeed;
+        document.getElementById('rotateSpeed_out').innerHTML = rotateSpeed.toFixed(3);
+        document.getElementById('forwardSpeed').value = forwardSpeed;
+        document.getElementById('forwardSpeed_out').innerHTML = forwardSpeed.toFixed(3);
+        document.getElementById('sideSpeed').value = sideSpeed;
+        document.getElementById('sideSpeed_out').innerHTML = forwardSpeed.toFixed(3);
         if (dataChannel != null) {
-            dataChannel.send(new TextEncoder().encode("jyja" + ang.toFixed(3) + "," + lin.toFixed(3) + "\n"));
+            dataChannel.send(new TextEncoder().encode("jyja" + rotateSpeed.toFixed(3) + "," + forwardSpeed.toFixed(3) + "," + sideSpeed.toFixed(3) + "\n"));
         }
     }
 }
