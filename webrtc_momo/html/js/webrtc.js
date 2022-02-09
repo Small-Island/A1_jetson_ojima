@@ -449,28 +449,36 @@ function sendDataChannel() {
     // }
     // let target = document.getElementById("warning");
     // target.innerHTML = "";
-    let textData = "acce" + T2_Input.value + "," + accel_Input.value + "," + max_velocity_Input.value + ",";
+
+    // let textData = "acce" + T2_Input.value + "," + accel_Input.value + "," + max_velocity_Input.value + ",";
+    // if (reverse_Input[0].checked) {
+    //     textData = textData + 0;
+    // }
+    // else {
+    //     textData = textData + 1;
+    // }
+    // console.log("send: " + textData);
+    // if (textData.length == 0) {
+    //     return;
+    // }
+    // if (dataChannel == null || dataChannel.readyState != "open") {
+    //     // console.log("hello");
+    //     return;
+    // }
+    // dataChannel.send(new TextEncoder().encode(textData));
+
     if (reverse_Input[0].checked) {
-        textData = textData + 0;
+        dataChannel.send( new Int32Array([ 0xab000000 | (((127*T2_Input.value/20.0) << 12) & 0x00ff0000) | (((127*accel_Input.value/0.5) << 8 ) & 0x0000ff00) | ((127*max_velocity_Input.value/1.0) & 0x000000ff) ]));
     }
     else {
-        textData = textData + 1;
+        dataChannel.send( new Int32Array([ 0xaf000000 | (((127*T2_Input.value/20.0) << 12) & 0x00ff0000) | (((127*accel_Input.value/0.5) << 8 ) & 0x0000ff00) | ((127*max_velocity_Input.value/1.0) & 0x000000ff) ]));
     }
-    console.log("send: " + textData);
-    if (textData.length == 0) {
-        return;
-    }
-    if (dataChannel == null || dataChannel.readyState != "open") {
-        // console.log("hello");
-        return;
-    }
-    dataChannel.send(new TextEncoder().encode(textData));
     // accel_Input.value = "";
     // max_velocity_Input.value = "";
 }
 
 function quit_accel_cmd() {
-    dataChannel.send(new TextEncoder().encode("quit"));
+    dataChannel.send(new Int32Array([0x99999999]));
 }
 
 function handleTargetVelDownload() {
@@ -486,7 +494,7 @@ function handleTargetVelDownload() {
 }
 
 function handleActualVelDownload() {
-    real_velocity_logData = '#計測した速度の記録\n#時刻(s),左右平均(m/s),左車輪(m/s),右車輪(m/s)\n' + real_velocity_logData;
+    real_velocity_logData = '#計測した速度の記録\n#時刻(s),送信速度(m/s),左右平均(m/s),左車輪(m/s),右車輪(m/s)\n' + real_velocity_logData;
     let blob = new Blob([real_velocity_logData], {"type": "text/plain"});
 
     if (window.navigator.msSaveBlob) {
@@ -534,17 +542,22 @@ function gameLoop() {
     let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
     let gp = gamepads[0];
     if (gp != null) {
-        let rotateSpeed = -1.0*gp.axes[0];
-        let forwardSpeed = -1.0*gp.axes[1];
-        let sideSpeed = -1.0*gp.axes[2];
-        document.getElementById('rotateSpeed').value = rotateSpeed;
-        document.getElementById('rotateSpeed_out').innerHTML = rotateSpeed.toFixed(3);
-        document.getElementById('forwardSpeed').value = forwardSpeed;
-        document.getElementById('forwardSpeed_out').innerHTML = forwardSpeed.toFixed(3);
-        document.getElementById('sideSpeed').value = sideSpeed;
-        document.getElementById('sideSpeed_out').innerHTML = sideSpeed.toFixed(3);
+        let ang = -gp.axes[0];
+        let lin = -gp.axes[3];
+        document.getElementById('leftright').value = 50*ang;
+        document.getElementById('leftright_out').innerHTML = 50*ang.toFixed(3);
+        document.getElementById('frontrear').value = lin;
+        document.getElementById('frontrear_out').innerHTML = lin.toFixed(3);
         if (dataChannel != null) {
-            dataChannel.send(new TextEncoder().encode("jyja" + rotateSpeed.toFixed(3) + "," + forwardSpeed.toFixed(3) + "," + sideSpeed.toFixed(3) + "\n"));
+            // dataChannel.send(new TextEncoder().encode("jyja" + ang.toFixed(3) + "," + lin.toFixed(3) + "\n"));
+            // const buffer = new ArrayBuffer(1);
+            // console.log(buffer);
+            ang = 127*ang;
+            lin = 127*lin;
+            ang = (ang << 8) & 0x0000ff00;
+            lin = lin & 0x000000ff;
+            let send_value = new Int32Array([0x43000000 | ang | lin]);
+            dataChannel.send(send_value);
         }
     }
 }
