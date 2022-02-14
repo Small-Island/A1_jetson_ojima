@@ -558,12 +558,12 @@ function gameLoop() {
             // console.log(buffer);
             if (gp.buttons[1].value) {
                 start = true;
-                dataChannel.send(new Int32Array([0x10000000]));
+                dataChannel.send(new Int32Array([0x11111111]));
                 return;
             }
             if (gp.buttons[0].value) {
                 start = false;
-                dataChannel.send(new Int32Array([0x00000000]));
+                dataChannel.send(new Int32Array([0x99999999]));
                 return;
             }
             if (start) {
