@@ -556,11 +556,11 @@ function gameLoop() {
             // dataChannel.send(new TextEncoder().encode("jyja" + ang.toFixed(3) + "," + lin.toFixed(3) + "\n"));
             // const buffer = new ArrayBuffer(1);
             // console.log(buffer);
-            if (gp.buttons[1]) {
+            if (gp.buttons[1].value) {
                 start = true;
                 dataChannel.send(new Int32Array([0x10000000]));
             }
-            if (gp.buttons[0]) {
+            if (gp.buttons[0].value) {
                 start = false;
                 dataChannel.send(new Int32Array([0x00000000]));
             }
