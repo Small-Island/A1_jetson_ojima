@@ -547,7 +547,6 @@ function gameLoop() {
     if (gp != null) {
         let ang = -gp.axes[0];
         let lin = -gp.axes[3];
-        console.log(gp.buttons[0]);
         document.getElementById('leftright').value = 50*ang;
         document.getElementById('leftright_out').innerHTML = 50*ang.toFixed(3);
         document.getElementById('frontrear').value = lin;
