@@ -52,7 +52,8 @@ int main(int argc, char* argv[]) {
 
                 sendto(sockfd, buf_ptr, 1*sizeof(int32_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
-            else if ((buf_ptr[0] & 0xff000000) == 0xab000000) {
+            else if (buf_ptr[0] == 0x11111111) {
+                sendto(sockfd, buf_ptr, 1*sizeof(int32_t), 0, (struct sockaddr *)&addr, sizeof(addr));
                 // segway_rmp::AccelCmd msg;
                 // msg.T2 = 20*(int8_t)((buf_ptr[0] & 0x00ff0000) >> 12)/127.0;
                 // msg.a = 0.5*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
@@ -60,19 +61,14 @@ int main(int argc, char* argv[]) {
                 // msg.reverse = 1;
                 // accel_pub.publish(msg);
             }
-            else if ((buf_ptr[0] & 0xff000000) == 0xaf000000) {
+            else if (buf_ptr[0] == 0x99999999) {
+                sendto(sockfd, buf_ptr, 1*sizeof(int32_t), 0, (struct sockaddr *)&addr, sizeof(addr));
                 // segway_rmp::AccelCmd msg;
                 // msg.T2 = 20*(int8_t)((buf_ptr[0] & 0x00ff0000) >> 12)/127.0;
                 // msg.a = 0.5*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
                 // msg.vel_limit = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
-                // msg.reverse = 0;
+                // msg.reverse = 1;
                 // accel_pub.publish(msg);
-            }
-            else if (buf_ptr[0] == 0x99999999) {
-                // std::cout << "segway_rmp_node を終了\n";
-                // std_msgs::String msg;
-                // msg.data = "quit";
-                // halt_pub.publish(msg);
             }
         }
 
