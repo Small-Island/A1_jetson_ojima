@@ -538,12 +538,16 @@ window.addEventListener("gamepadconnected", function(e) {
     setInterval(gameLoop, 1000.0/20.0);
     gameLoop();
 });
+
+let start = false;
+
 function gameLoop() {
     let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
     let gp = gamepads[0];
     if (gp != null) {
         let ang = -gp.axes[0];
         let lin = -gp.axes[3];
+        console.log(gp.buttons[0]);
         document.getElementById('leftright').value = 50*ang;
         document.getElementById('leftright_out').innerHTML = 50*ang.toFixed(3);
         document.getElementById('frontrear').value = lin;
@@ -552,12 +556,22 @@ function gameLoop() {
             // dataChannel.send(new TextEncoder().encode("jyja" + ang.toFixed(3) + "," + lin.toFixed(3) + "\n"));
             // const buffer = new ArrayBuffer(1);
             // console.log(buffer);
-            ang = 127*ang;
-            lin = 127*lin;
-            ang = (ang << 8) & 0x0000ff00;
-            lin = lin & 0x000000ff;
-            let send_value = new Int32Array([0x43000000 | ang | lin]);
-            dataChannel.send(send_value);
+            if (gp.buttons[1]) {
+                start = true;
+                dataChannel.send(new Int32Array([0x10000000]));
+            }
+            if (gp.buttons[0]) {
+                start = false;
+                dataChannel.send(new Int32Array([0x00000000]));
+            }
+            if (start) {
+                ang = 127*ang;
+                lin = 127*lin;
+                ang = (ang << 8) & 0x0000ff00;
+                lin = lin & 0x000000ff;
+                let send_value = new Int32Array([0x43000000 | ang | lin]);
+                dataChannel.send(send_value);
+            }
         }
     }
 }
