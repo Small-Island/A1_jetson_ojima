@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     addr.sin_addr.s_addr = inet_addr("192.168.123.161");
     addr.sin_port = htons(4001);
 
-    int fd_read = open("./serial_out", O_RDONLY);
+    int fd_read = open("/home/tristar/A1_jetson_ojima/serial_out", O_RDONLY);
 
     while (1) {
         // int req_size = 30;
