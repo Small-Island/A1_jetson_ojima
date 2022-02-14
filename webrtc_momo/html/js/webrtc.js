@@ -559,10 +559,12 @@ function gameLoop() {
             if (gp.buttons[1].value) {
                 start = true;
                 dataChannel.send(new Int32Array([0x10000000]));
+                return;
             }
             if (gp.buttons[0].value) {
                 start = false;
                 dataChannel.send(new Int32Array([0x00000000]));
+                return;
             }
             if (start) {
                 ang = 127*ang;
@@ -571,6 +573,7 @@ function gameLoop() {
                 lin = lin & 0x000000ff;
                 let send_value = new Int32Array([0x43000000 | ang | lin]);
                 dataChannel.send(send_value);
+                return;
             }
         }
     }
