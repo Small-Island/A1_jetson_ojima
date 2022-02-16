@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
 
         if (read_size == 4) {
-            if ((buf_ptr[0] & 0xff) == 0x43 && buf_ptr[1] == 0x00) {
+            if ((buf_ptr[0] & 0xff) == 0x43) {
                 // segway_rmp::jyja msg;
                 // printf("%lf %lf\n", 50*(int8_t)buf_ptr[2] /127.0, 1.0*(int8_t)buf_ptr[3] /127.0);
                 // jyja_pub.publish(msg);
