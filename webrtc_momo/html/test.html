@@ -81,7 +81,7 @@
         // };
         const options = {
             multistream: true,
-            video: true,
+            video: false,
             audio: true,
             dataChannelSignaling: true,
             dataChannels: [
@@ -123,7 +123,7 @@
         });
 
 
-        setInterval(sendHello, 1000.0*3.0);
+        setInterval(sendHello, 1000.0*1.0);
         let counta = 0;
         function sendHello() {
             counta = counta + 1;
