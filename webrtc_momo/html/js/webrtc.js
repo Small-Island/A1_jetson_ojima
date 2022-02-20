@@ -567,7 +567,7 @@ function gameLoop() {
                 return;
             }
             if (start) {
-                side = 172.side;
+                side = 127*side;
                 ang = 127*ang;
                 lin = 127*lin;
                 // ang = (ang << 8) & 0x0000ff00;
