@@ -207,7 +207,7 @@
 
     setInterval(sendLoop, 1000/20);
     function sendLoop() {
-        dataChannel.send(new Uint8Array([0x43, 127*(-xside + myPicsside.width/2)/(myPicsside.width/2), -127*(x - myPics.width/2)/(myPics.width/2),  127*(-y2 + myPics2.height/2)/(myPics2.height/2)]));
+        dataChannel.send(new Uint8Array([0xas, 127*(-xside + myPicsside.width/2)/(myPicsside.width/2), -127*(x - myPics.width/2)/(myPics.width/2),  127*(-y2 + myPics2.height/2)/(myPics2.height/2)]));
     }
 
     window.addEventListener('deviceorientation', e => {
