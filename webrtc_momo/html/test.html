@@ -70,7 +70,11 @@
         recvonly.connect();
 
         recvonly.on('message', (event) => {
-            dataChannel.send(event.data);
+            if (new Uint8Array(event.data)[0] == 0xa1) {
+                if (dataChannel) {
+                    dataChannel.send(event.data);
+                }
+            }
         });
     </script>
   </body>
