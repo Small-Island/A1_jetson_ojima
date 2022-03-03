@@ -572,7 +572,7 @@ function gameLoop() {
                 lin = 127*lin;
                 // ang = (ang << 8) & 0x0000ff00;
                 // lin = lin & 0x000000ff;
-                let send_value = new Uint8Array([0x43, side, ang, lin]);
+                let send_value = new Uint8Array([0xa1, side, ang, lin]);
                 dataChannel.send(send_value);
                 console.log(send_value)
                 return;
