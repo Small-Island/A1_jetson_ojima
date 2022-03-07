@@ -32,6 +32,9 @@ int main(int argc, char* argv[]) {
             if (buf_ptr[0] == 0xa1) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
+            else if (buf_ptr[0] == 0xaa) {
+                sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            }
             else if (buf_ptr[0] == 0x11 && buf_ptr[1] == 0x11 && buf_ptr[2] == 0x11 && buf_ptr[3] == 0x11) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
