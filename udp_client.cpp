@@ -26,7 +26,6 @@ int main(int argc, char* argv[]) {
 
         int read_size = read(fd_read, buf_ptr, req_size);
         printf("read %d byte: %02x %02x %02x %02x\n", read_size, buf_ptr[0], buf_ptr[1], buf_ptr[2], buf_ptr[3]);
-        printf("%d, %d, %d\n", (int8_t)buf_ptr[1], (int8_t)buf_ptr[2], (int8_t)buf_ptr[3]);
 
         if (read_size == 4) {
             if (buf_ptr[0] == 0xa1) {
