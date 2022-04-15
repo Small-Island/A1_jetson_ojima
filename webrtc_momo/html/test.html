@@ -73,6 +73,7 @@
             if ( event.data.byteLength == 4) {
                 if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa) {
                     if (dataChannel) {
+                        console.log(new Uint8Array(event.data));
                         dataChannel.send(event.data);
                     }
                 }
