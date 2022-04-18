@@ -43,6 +43,10 @@
             <br>
         </div>
     </main>
+    <script type="text/javascript">
+        let CLOSE_DATA_CHANNEL = false;
+        let RESTART = true;
+    </script>
     <script type='text/javascript' src='./js/webrtc_test.js'></script>
     <script type='text/javascript' src='./js/sora.js'></script>
     <script type="text/javascript">
@@ -74,11 +78,31 @@
                 if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa) {
                     if (dataChannel) {
                         console.log(new Uint8Array(event.data));
+                        if (dataChannel.readyState == 'open') {
                         dataChannel.send(event.data);
+                        }
+                        else {
+                            connect();
+                        }
                     }
                 }
             }
         });
+
+        setInterval(observe_CLOSE_DATA_CHANNEL, 10000);
+        function observe_CLOSE_DATA_CHANNEL() {
+            if (CLOSE_DATA_CHANNEL) {
+                if (!recvonly.signalingSwitched) {
+                    disconnect();
+                    recvonly.connect();
+                }
+            }
+            if (RESTART) {
+                RESTART = false;
+                // disconnect();
+                connect();
+            }
+        }
     </script>
   </body>
 </html>
