@@ -1876,7 +1876,7 @@
             }
             if (title == 'OPEN DATA CHANNEL') {
                 if (CLOSE_DATA_CHANNEL) {
-                    RESTART = true;
+                    // RESTART = true;
                     CLOSE_DATA_CHANNEL = false;
                 }
             }

@@ -45,7 +45,7 @@
     </main>
     <script type="text/javascript">
         let CLOSE_DATA_CHANNEL = true;
-        let RESTART = false;
+        // let RESTART = false;
     </script>
     <script type='text/javascript' src='./js/webrtc_test.js'></script>
     <script type='text/javascript' src='./js/sora.js'></script>
@@ -72,6 +72,7 @@
         };
         let recvonly = sora.recvonly(channelId, null, options);
         recvonly.connect();
+        connect();
 
         recvonly.on('message', (event) => {
             if ( event.data.byteLength == 4) {
@@ -93,15 +94,15 @@
         function observe_CLOSE_DATA_CHANNEL() {
             if (CLOSE_DATA_CHANNEL) {
                 if (!recvonly.signalingSwitched) {
-                    disconnect();
                     recvonly.connect();
+                    disconnect();
                 }
             }
-            if (RESTART) {
-                RESTART = false;
-                // disconnect();
-                connect();
-            }
+            // if (RESTART) {
+            //     RESTART = false;
+            //     // disconnect();
+            //     connect();
+            // }
         }
     </script>
   </body>
