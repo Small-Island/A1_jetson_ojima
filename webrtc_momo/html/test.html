@@ -79,7 +79,7 @@
                     if (dataChannel) {
                         console.log(new Uint8Array(event.data));
                         if (dataChannel.readyState == 'open') {
-                        dataChannel.send(event.data);
+                            dataChannel.send(event.data);
                         }
                         else {
                             connect();
