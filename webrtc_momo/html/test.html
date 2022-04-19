@@ -90,14 +90,16 @@
             }
         });
 
-        setInterval(observe_CLOSE_DATA_CHANNEL, 10000);
+        setInterval(observe_CLOSE_DATA_CHANNEL, 20000);
         function observe_CLOSE_DATA_CHANNEL() {
-            if (CLOSE_DATA_CHANNEL) {
-                if (!recvonly.signalingSwitched) {
-                    recvonly.connect();
-                    disconnect();
-                }
-            }
+            // if (CLOSE_DATA_CHANNEL) {
+            //     if (!recvonly.signalingSwitched) {
+            //         recvonly.connect();
+            //         disconnect();
+            //     }
+            // }
+            recvonly.connect();
+            disconnect();
             // if (RESTART) {
             //     RESTART = false;
             //     // disconnect();
