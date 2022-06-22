@@ -72,7 +72,7 @@
         };
         let recvonly = sora.recvonly(channelId, null, options);
         recvonly.connect();
-        connect();
+        // connect();
 
         recvonly.on('message', (event) => {
             if ( event.data.byteLength == 4) {
