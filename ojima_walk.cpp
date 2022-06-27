@@ -266,34 +266,6 @@ void Custom::RobotControl()
     }
 }
 
-void Custom::HighStateRecv() {
-    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("192.168.123.12");
-    addr.sin_port = htons(4002);
-    while (1) {
-        udp.GetRecv(highstate);
-        // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
-
-        // printf("forwardPosition %lf sidePosition %lf\n", highstate.forwardPosition + init_fp, highstate.sidePosition + init_sp);
-        forwardPosition = highstate.forwardPosition;
-        sidePosition = highstate.sidePosition;
-
-        int p_x = sidePosition* 100.0;
-        uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
-        uint8_t lx = (uint8_t)(p_x & 0x00ff);
-
-        int p_z = forwardPosition * 100.0;
-        uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
-        uint8_t lz = (uint8_t)(p_z & 0x00ff);
-
-        uint8_t buf_ptr[5] = {(uint8_t)auto_moving_state, hx, lx, hz, lz};
-        sendto(sockfd, buf_ptr, 5*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-    }
-    return;
-}
-
 int main(void)
 {
     std::cout << "Control level is set to HIGH-level." << std::endl
