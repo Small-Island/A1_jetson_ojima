@@ -233,7 +233,7 @@ void Custom::RobotControl()
             cmd.mode = 2;
         }
         if (fabs(x - highstate.sidePosition) > 0.05) {
-            cmd.sideSpeed = 0.3f*(x - highstate.sidePosition)/fabs(x - highstate.sidePosition);
+            cmd.sideSpeed = -0.3f*(x - highstate.sidePosition)/fabs(x - highstate.sidePosition);
             cmd.mode = 2;
         }
 
