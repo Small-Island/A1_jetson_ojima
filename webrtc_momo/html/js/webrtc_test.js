@@ -180,7 +180,7 @@ function prepareNewConnection() {
   peer.addTransceiver('audio', {direction: 'recvonly'});
 
     dataChannel.onmessage = function (event) {
-        if (event.data.byteLength == 6) {
+        if (new Uint8Array(event.data)[0] == 0xa5 && event.data.byteLength == 6) {
              recvonly.sendMessage('#sora-devtools', event.data);
              let auto_moving = new Uint8Array(event.data)[1];
              let position_x = (new Int16Array([new Uint8Array(event.data)[2] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[3]])[0] )/100.0;
