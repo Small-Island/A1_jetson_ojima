@@ -179,47 +179,16 @@ function prepareNewConnection() {
   peer.addTransceiver('video', {direction: 'recvonly'});
   peer.addTransceiver('audio', {direction: 'recvonly'});
 
-  dataChannel.onmessage = function (event) {
-    let msg = new TextDecoder().decode(event.data);
-    let str = msg.substr(4, msg.length);
-    let show = "";
-    console.log("Got local Data Channel Message:", msg);
-    for (let i = 0; i < str.length; i++) {
-        // console.log(str[i]);
-        if (str[i] == "?") {
-            show = show + '\n';
-        }
-        else {
-            show = show + str[i];
-        }
-    }
+    dataChannel.onmessage = function (event) {
+        if (event.data.byteLength == 4) {
+             recvonly.sendMessage('#sora-devtools', event.data);
+             let auto_moving = new Uint8Array(event.data)[0];
+             let position_x = (new Int16Array([new Uint8Array(event.data)[1] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[2]])[0] )/100.0;
+             let position_z = (new Int16Array([new Uint8Array(event.data)[3] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[4]])[0] )/100.0;
 
-    if (msg.substr(0, 4) == 'sgvs') {
-        // console.log('sgvs');
-        let target = document.getElementById("sgvs");
-        target.innerHTML = show;
-    }
-    else if (msg.substr(0, 4) == 'sgss') {
-        // console.log('sgss');
-        let target = document.getElementById("sgss");
-        target.innerHTML = show;
-        recvonly.sendMessage("#sora-devtools", new TextEncoder().encode(show));
-    }
-    else if (msg.substr(0, 4) == 'seve') {
-        // console.log('seve');
-        if (log_latch) {
-            ideal_velocity_logData = ideal_velocity_logData + show + '\n';
+             document.getElementById("sgss").innerHTML = 'auto_moving ' + auto_moving + '\nposition x(m) ' + position_x + '\nposition z(m) ' + position_z;
         }
-    }
-    else if (msg.substr(0, 4) == 'geve') {
-        // console.log('geve');
-        if (log_latch) {
-            real_velocity_logData = real_velocity_logData + show + '\n';
-        }
-    }
-
-    // console.log(show);
-  };
+    };
 
   return peer;
 }

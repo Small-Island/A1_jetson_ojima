@@ -28,20 +28,8 @@ class Custom
 {
 public:
     Custom():
-    control(LeggedType::A1, HIGHLEVEL), udp(),
-    sockfd(socket(AF_INET, SOCK_DGRAM, 0))
+    control(LeggedType::A1, HIGHLEVEL), udp()
     {
-        (*this).control.InitCmdData(cmd);
-
-        (*this).addr.sin_family = AF_INET;
-        (*this).addr.sin_addr.s_addr = inet_addr("0.0.0.0");
-        (*this).addr.sin_port = htons(4001);
-        if (bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-            std::cout << "Error bind:" << std::strerror(errno);
-            exit(1);
-        }
-        (*this).start = false;
-        (*this).sleep = false;
     }
     void UDPRecv();
     void UDPSend();
@@ -61,14 +49,12 @@ public:
     int sockfd;
     struct sockaddr_in addr;
 
-    bool start;
 
     std::chrono::system_clock::time_point jyja_arrival_time;
 
-    bool sleep;
 
-    double forwardPosition = 0, init_fp = 0;
-    double sidePosition = 0, init_sp = 0;
+    double forwardPosition = 0;
+    double sidePosition = 0;
     int mode;
 
     std::mutex mutex;
@@ -84,8 +70,17 @@ void Custom::UDPRecv() {
     udp.Recv();
 }
 
-void Custom::momoUDPRecv()
-{
+void Custom::momoUDPRecv() {
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("0.0.0.0");
+    addr.sin_port = htons(4001);
+    if (bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        std::cout << "Error bind:" << std::strerror(errno);
+        exit(1);
+    }
+
     while (1) {
         const int N = 4;
         uint8_t buf_ptr[N] = {0};
@@ -123,8 +118,8 @@ void Custom::momoUDPRecv()
                 }
             }
             else if (buf_ptr[0] == 0xa2) {
-                z = 1.0f*(int8_t)buf_ptr[2]/100.0;
-                x = 1.0f*(int8_t)buf_ptr[3]/100.0;
+                x = 1.0f*(int8_t)buf_ptr[2]/100.0;
+                z = 1.0f*(int8_t)buf_ptr[3]/100.0;
                 auto_moving_state = 1;
             }
             else if (buf_ptr[0] == 0xaa) {
@@ -253,6 +248,11 @@ void Custom::RobotControl()
 }
 
 void Custom::HighStateRecv() {
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("192.168.123.12");
+    addr.sin_port = htons(4002);
     while (1) {
         udp.GetRecv(highstate);
         // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
@@ -260,6 +260,18 @@ void Custom::HighStateRecv() {
         // printf("forwardPosition %lf sidePosition %lf\n", highstate.forwardPosition + init_fp, highstate.sidePosition + init_sp);
         forwardPosition = highstate.forwardPosition;
         sidePosition = highstate.sidePosition;
+
+        int p_x = sidePosition* 100.0;
+        uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
+        uint8_t lx = (uint8_t)(p_x & 0x00ff);
+
+        int p_z = forwardPosition * 100.0;
+        uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
+        uint8_t lz = (uint8_t)(p_z & 0x00ff);
+
+        uint8_t buf_ptr[5] = {(uint8_t)auto_moving_state, hx, lx, hz, lz}
+        sendto(sockfd, buf_ptr, 5*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     return;
 }
