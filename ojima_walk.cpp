@@ -271,7 +271,6 @@ void Custom::HighStateRecv() {
 
         uint8_t buf_ptr[5] = {(uint8_t)auto_moving_state, hx, lx, hz, lz};
         sendto(sockfd, buf_ptr, 5*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     return;
 }
