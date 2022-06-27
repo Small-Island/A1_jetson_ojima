@@ -60,13 +60,9 @@ void x86_to_momo() {
     while (1) {
         uint8_t buf_ptr[100] = {0};
         int recv_size = recv(sockfd, buf_ptr, sizeof(buf_ptr), 0);
-        buf_ptr[5] = 10;
-        write(fd_write, buf_ptr, 6);
-        printf("to momo %d byte: %02x %02x %02x %02x %02x\n", recv_size, buf_ptr[0], buf_ptr[1], buf_ptr[2], buf_ptr[3], buf_ptr[4]);
-    
         if (recv_size == 5) {
             buf_ptr[5] = 10;
-            write(fd_write, buf_ptr, 6);
+            write(fd_write, buf_ptr, 7);
             printf("to momo %d byte: %02x %02x %02x %02x %02x\n", recv_size, buf_ptr[0], buf_ptr[1], buf_ptr[2], buf_ptr[3], buf_ptr[4]);
         }
     }
