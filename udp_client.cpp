@@ -30,7 +30,7 @@ void momo_to_x86(void) {
             if (buf_ptr[0] == 0xa1) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
-            else if (buf_ptr[0] == 0xa2) {
+            else if (buf_ptr[0] == 0xa4) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
             else if (buf_ptr[0] == 0xaa) {

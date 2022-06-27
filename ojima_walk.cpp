@@ -114,7 +114,7 @@ void Custom::momoUDPRecv() {
                     (*this).cmd.mode = 2;
                 }
             }
-            else if (buf_ptr[0] == 0xa2) {
+            else if (buf_ptr[0] == 0xa4) {
                 x = 1.0f*(int8_t)buf_ptr[2]/100.0;
                 z = 1.0f*(int8_t)buf_ptr[3]/100.0;
                 auto_moving_state = 1;
