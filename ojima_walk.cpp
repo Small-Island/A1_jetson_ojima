@@ -257,7 +257,7 @@ void Custom::RobotControl()
                 // cmd.sideSpeed = 0.0f;
                 // cmd.rotateSpeed = 0.0f;
                 // cmd.mode = 1;
-                printf("\n\n=============\n=============complete auto_moving=============\n=============\n\n");
+                printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
                 auto_moving_state = 0;
             }
         }
