@@ -52,9 +52,6 @@ public:
 
     std::chrono::system_clock::time_point jyja_arrival_time;
 
-
-    double forwardPosition = 0;
-    double sidePosition = 0;
     int mode;
 
     std::mutex mutex;
@@ -145,18 +142,6 @@ void Custom::momoUDPRecv() {
                     (*this).cmd.mode = 1;
                 }
             }
-            else if ((buf_ptr[0] & 0xff000000) == 0xab000000) {
-
-            }
-            else if ((buf_ptr[0] & 0xff000000) == 0xaf000000) {
-
-            }
-            // else if (buf_ptr[0] == 0x99999999) {
-            //     (*this).start = false;
-            // }
-            // else if (buf_ptr[0] == 0x11111111) {
-            //     (*this).start = true;
-            // }
         }
     }
 
@@ -198,11 +183,11 @@ void Custom::RobotControl()
         // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
 
         if (show_count > 10) {
-            int p_x = sidePosition* 100.0;
+            int p_x = highstate.sidePosition* 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
 
-            int p_z = forwardPosition * 100.0;
+            int p_z = highstate.forwardPosition * 100.0;
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
@@ -212,12 +197,6 @@ void Custom::RobotControl()
             show_count = 0;
         }
         show_count++;
-        // if (highstate.forwardPosition < 0.1 && forwardPosition > 0.1) {
-        //     init_fp = forwardPosition;
-        //     printf("init_fp %lf\n", init_fp);
-        // }
-        forwardPosition = highstate.forwardPosition;
-        sidePosition = highstate.sidePosition;
 
         mutex.lock();
         if (auto_moving_state == 0) {
