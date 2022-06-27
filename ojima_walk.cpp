@@ -226,7 +226,7 @@ void Custom::RobotControl()
     else if (auto_moving_state == 1) {
         if ((fabs(z - highstate.forwardPosition) > 0.01 || fabs(x - highstate.sidePosition) > 0.01)) {
             cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
-            cmd.sideSpeed = 0.5f*(x - highstate.sidePosition)/fabs(x - highstate.sidePosition);
+            cmd.sideSpeed = 0.3f*(x - highstate.sidePosition)/fabs(x - highstate.sidePosition);
             cmd.rotateSpeed = 0;
             cmd.mode = 2;
             udp.SetSend(cmd);
