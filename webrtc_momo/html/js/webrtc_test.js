@@ -180,11 +180,11 @@ function prepareNewConnection() {
   peer.addTransceiver('audio', {direction: 'recvonly'});
 
     dataChannel.onmessage = function (event) {
-        if (event.data.byteLength == 5) {
+        if (event.data.byteLength == 6) {
              recvonly.sendMessage('#sora-devtools', event.data);
-             let auto_moving = new Uint8Array(event.data)[0];
-             let position_x = (new Int16Array([new Uint8Array(event.data)[1] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[2]])[0] )/100.0;
-             let position_z = (new Int16Array([new Uint8Array(event.data)[3] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[4]])[0] )/100.0;
+             let auto_moving = new Uint8Array(event.data)[1];
+             let position_x = (new Int16Array([new Uint8Array(event.data)[2] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[3]])[0] )/100.0;
+             let position_z = (new Int16Array([new Uint8Array(event.data)[4] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[5]])[0] )/100.0;
 
              document.getElementById("sgss").innerHTML = 'auto_moving ' + auto_moving + '\nposition x(m) ' + position_x + '\nposition z(m) ' + position_z;
         }
