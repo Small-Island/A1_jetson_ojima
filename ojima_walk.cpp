@@ -187,64 +187,83 @@ void Custom::RobotControl()
     //     cmd.mode = 2;
     // }
 
-    udp.GetRecv(highstate);
-    // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("192.168.123.12");
+    addr.sin_port = htons(4002);
 
-    if (show_count > 50) {
-        printf("auto_moving_state %d forwardPosition %lf sidePosition %lf\n", auto_moving_state, highstate.forwardPosition, highstate.sidePosition);
-        show_count = 0;
-    }
-    show_count++;
-    // if (highstate.forwardPosition < 0.1 && forwardPosition > 0.1) {
-    //     init_fp = forwardPosition;
-    //     printf("init_fp %lf\n", init_fp);
-    // }
-    forwardPosition = highstate.forwardPosition;
-    sidePosition = highstate.sidePosition;
+    while (1) {
+        udp.GetRecv(highstate);
+        // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
 
-    mutex.lock();
-    if (auto_moving_state == 0) {
-        if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
-            udp.SetSend(cmd);
+        if (show_count > 50) {
+            int p_x = sidePosition* 100.0;
+            uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
+            uint8_t lx = (uint8_t)(p_x & 0x00ff);
+
+            int p_z = forwardPosition * 100.0;
+            uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
+            uint8_t lz = (uint8_t)(p_z & 0x00ff);
+
+            uint8_t buf_ptr[5] = {(uint8_t)auto_moving_state, hx, lx, hz, lz};
+            sendto(sockfd, buf_ptr, 5*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            printf("auto_moving_state %d forwardPosition %lf sidePosition %lf\n", auto_moving_state, highstate.forwardPosition, highstate.sidePosition);
+            show_count = 0;
         }
-        else {
-            cmd.forwardSpeed = 0.0f;
-            cmd.sideSpeed = 0.0f;
-            cmd.rotateSpeed = 0.0f;
-            cmd.roll  = 0;
-            cmd.pitch = 0;
-            cmd.yaw = 0;
+        show_count++;
+        // if (highstate.forwardPosition < 0.1 && forwardPosition > 0.1) {
+        //     init_fp = forwardPosition;
+        //     printf("init_fp %lf\n", init_fp);
+        // }
+        forwardPosition = highstate.forwardPosition;
+        sidePosition = highstate.sidePosition;
+
+        mutex.lock();
+        if (auto_moving_state == 0) {
+            if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
+                udp.SetSend(cmd);
+            }
+            else {
+                cmd.forwardSpeed = 0.0f;
+                cmd.sideSpeed = 0.0f;
+                cmd.rotateSpeed = 0.0f;
+                cmd.roll  = 0;
+                cmd.pitch = 0;
+                cmd.yaw = 0;
+                cmd.mode = 1;
+                udp.SetSend(cmd);
+            }
+        }
+        else if (auto_moving_state == 1) {
+            cmd.forwardSpeed = 0;
+            cmd.rotateSpeed = 0;
+            cmd.sideSpeed = 0;
             cmd.mode = 1;
-            udp.SetSend(cmd);
-        }
-    }
-    else if (auto_moving_state == 1) {
-        cmd.forwardSpeed = 0;
-        cmd.rotateSpeed = 0;
-        cmd.sideSpeed = 0;
-        cmd.mode = 1;
-        if (fabs(z - highstate.forwardPosition) > 0.05) {
-            cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
-            cmd.mode = 2;
-        }
-        if (fabs(x + highstate.sidePosition) > 0.05) {
-            cmd.sideSpeed = -0.3f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
-            cmd.mode = 2;
-        }
+            if (fabs(z - highstate.forwardPosition) > 0.05) {
+                cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
+                cmd.mode = 2;
+            }
+            if (fabs(x + highstate.sidePosition) > 0.05) {
+                cmd.sideSpeed = -0.3f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
+                cmd.mode = 2;
+            }
 
-        if (cmd.mode == 2) {
-            udp.SetSend(cmd);
+            if (cmd.mode == 2) {
+                udp.SetSend(cmd);
+            }
+            else {
+                // cmd.forwardSpeed = 0.0f;
+                // cmd.sideSpeed = 0.0f;
+                // cmd.rotateSpeed = 0.0f;
+                // cmd.mode = 1;
+                printf("\n\n=============\n=============complete auto_moving=============\n=============\n\n");
+                auto_moving_state = 0;
+            }
         }
-        else {
-            // cmd.forwardSpeed = 0.0f;
-            // cmd.sideSpeed = 0.0f;
-            // cmd.rotateSpeed = 0.0f;
-            // cmd.mode = 1;
-            printf("\n\n=============\n=============complete auto_moving=============\n=============\n\n");
-            auto_moving_state = 0;
-        }
+        mutex.unlock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10))
     }
-    mutex.unlock();
 }
 
 void Custom::HighStateRecv() {
@@ -284,18 +303,20 @@ int main(void)
 
     Custom custom;
 
-    LoopFunc loop_control("control_loop", custom.dt,    boost::bind(&Custom::RobotControl, &custom));
+    // LoopFunc loop_control("control_loop", custom.dt,    boost::bind(&Custom::RobotControl, &custom));
     LoopFunc loop_udpSend("udp_send",     custom.dt, 3, boost::bind(&Custom::UDPSend,      &custom));
     LoopFunc loop_udpRecv("udp_recv",     custom.dt, 3, boost::bind(&Custom::UDPRecv,      &custom));
 
 
     loop_udpSend.start();
     loop_udpRecv.start();
-    loop_control.start();
+    // loop_control.start();
 
     // std::thread th_HighStateRecv(&Custom::HighStateRecv, &custom);
     std::thread th_momoUDPRecv(&Custom::momoUDPRecv, &custom);
     // std::thread th_user_input(&Custom::user_input, &custom);
+
+    std::thread th_RobotControl(&Custom::RobotControl, &custom);
 
     while(1){
         sleep(10);
