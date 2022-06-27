@@ -242,9 +242,12 @@ void Custom::RobotControl()
             cmd.mode = 1;
             if (fabs(z - highstate.forwardPosition) > 0.05) {
                 cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
+                if (cmd.forwardSpeed < 0) {
+                    cmd.forwardSpeed = 3.0*cmd.forwardSpeed;
+                }
                 cmd.mode = 2;
             }
-            if (fabs(x + highstate.sidePosition) > 0.05) {
+            if (fabs(x + highstate.sidePosition) > 0.1) {
                 cmd.sideSpeed = -0.3f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
                 cmd.mode = 2;
             }
