@@ -197,7 +197,7 @@ void Custom::RobotControl()
         udp.GetRecv(highstate);
         // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
 
-        if (show_count > 20) {
+        if (show_count > 10) {
             int p_x = sidePosition* 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
@@ -248,7 +248,7 @@ void Custom::RobotControl()
                 cmd.mode = 2;
             }
             if (fabs(x + highstate.sidePosition) > 0.05) {
-                cmd.sideSpeed = -1.0f*(x + highstate.sidePosition);
+                cmd.sideSpeed = -10.0f*(x + highstate.sidePosition);
                 cmd.mode = 2;
             }
 
