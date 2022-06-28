@@ -102,13 +102,13 @@ void Custom::momoUDPRecv() {
                     (*this).cmd.mode = 1;
                 }
                 else {
-                    (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
+                    // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
                     (*this).cmd.rotateSpeed = 0.45*(int8_t)buf_ptr[2] /127.0;
                     // (*this).cmd.rotateSpeed = 0;
-                    (*this).cmd.forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
-                    cmd.roll  = 0;
-                    cmd.pitch = 0;
-                    cmd.yaw = 0;
+                    // (*this).cmd.forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
+                    (*this).cmd.roll  = 0;
+                    (*this).cmd.pitch = 0;
+                    (*this).cmd.yaw = 0;
                     // (*this).cmd.rotateSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
                     // (*this).cmd.forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
                     (*this).cmd.mode = 2;
@@ -209,7 +209,7 @@ void Custom::RobotControl()
         if (auto_moving_state == 0) {
             if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
                 cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                cmd.sideSpeed = -0.1f*highstate.sidePosition/fabs(highstate.sidePosition);
+                cmd.sideSpeed = 0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
                 udp.SetSend(cmd);
             }
             else {
