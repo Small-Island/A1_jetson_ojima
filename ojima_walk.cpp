@@ -115,8 +115,8 @@ void Custom::momoUDPRecv() {
                 }
             }
             else if (buf_ptr[0] == 0xa4) {
-                x = 1.0f*(int8_t)buf_ptr[2]/100.0;
-                z = 1.0f*(int8_t)buf_ptr[3]/100.0;
+                x = 1.0f*(int8_t)buf_ptr[2]/10.0;
+                z = 1.0f*(int8_t)buf_ptr[3]/10.0;
                 auto_moving_state = 1;
             }
             else if (buf_ptr[0] == 0xaa) {
