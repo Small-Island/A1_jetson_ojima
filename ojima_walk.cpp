@@ -142,6 +142,13 @@ void Custom::momoUDPRecv() {
                     (*this).cmd.mode = 1;
                 }
             }
+            else if (buf_ptr[0] == 0x99 && buf_ptr[1] == 0x99 && buf_ptr[2] == 0x99 & buf_ptr[3] == 0x99) {
+                (*this).cmd.sideSpeed = 0;
+                (*this).cmd.rotateSpeed = 0;
+                (*this).cmd.forwardSpeed = 0;
+                (*this).cmd.mode = 1;
+                auto_moving_state = 0;
+            }
         }
     }
 
