@@ -209,7 +209,7 @@ void Custom::RobotControl()
         if (auto_moving_state == 0) {
             if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
                 cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                cmd.sideSpeed = 0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
                 udp.SetSend(cmd);
             }
             else {
