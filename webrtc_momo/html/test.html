@@ -76,7 +76,7 @@
 
         recvonly.on('message', (event) => {
             if ( event.data.byteLength == 4) {
-                if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa || new Uint8Array(event.data)[0] == 0xa4) {
+                if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa || new Uint8Array(event.data)[0] == 0xa4 || new Uint8Array(event.data)[0] == 0x99) {
                     if (dataChannel) {
                         console.log(new Uint8Array(event.data));
                         if (dataChannel.readyState == 'open') {
