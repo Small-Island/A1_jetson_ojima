@@ -61,7 +61,7 @@ public:
     int auto_moving_state = 0; //0: not auto_moving, 1: auto_moving
     double z = 0, x = 0;
 
-    bool robot_control = false;
+    bool robot_control = true;
 };
 
 
