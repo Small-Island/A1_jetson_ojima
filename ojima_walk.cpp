@@ -231,6 +231,7 @@ void Custom::RobotControl()
                     cmd.yaw = 0;
                     cmd.mode = 1;
                     udp.SetSend(cmd);
+                    robot_control = false;
                 }
             }
             else if (auto_moving_state == 1) {
