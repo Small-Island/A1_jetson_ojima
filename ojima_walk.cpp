@@ -61,7 +61,7 @@ public:
     int auto_moving_state = 0; //0: not auto_moving, 1: auto_moving
     double z = 0, x = 0;
 
-    bool robot_control = true;
+    bool robot_control = false;
 };
 
 
@@ -154,6 +154,9 @@ void Custom::momoUDPRecv() {
             else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
                 (*this).robot_control = true;
             }
+            else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
+                (*this).robot_control = true;
+            }
         }
     }
 
@@ -211,50 +214,52 @@ void Custom::RobotControl()
         show_count++;
 
         mutex.lock();
-        if (auto_moving_state == 0) {
-            if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
-                cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
-                udp.SetSend(cmd);
-            }
-            else {
-                cmd.forwardSpeed = 0.0f;
-                cmd.sideSpeed = 0.0f;
-                cmd.rotateSpeed = 0.0f;
-                cmd.roll  = 0;
-                cmd.pitch = 0;
-                cmd.yaw = 0;
-                cmd.mode = 1;
-                udp.SetSend(cmd);
-            }
-        }
-        else if (auto_moving_state == 1) {
-            cmd.forwardSpeed = 0;
-            cmd.rotateSpeed = 0;
-            cmd.sideSpeed = 0;
-            cmd.mode = 1;
-            if (fabs(z - highstate.forwardPosition) > 0.05) {
-                cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
-                if (cmd.forwardSpeed < 0) {
-                    cmd.forwardSpeed = 3.0*cmd.forwardSpeed;
+        if (robot_control) {
+            if (auto_moving_state == 0) {
+                if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
+                    cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
+                    cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                    udp.SetSend(cmd);
                 }
-                cmd.mode = 2;
+                else {
+                    cmd.forwardSpeed = 0.0f;
+                    cmd.sideSpeed = 0.0f;
+                    cmd.rotateSpeed = 0.0f;
+                    cmd.roll  = 0;
+                    cmd.pitch = 0;
+                    cmd.yaw = 0;
+                    cmd.mode = 1;
+                    udp.SetSend(cmd);
+                }
             }
-            if (fabs(x + highstate.sidePosition) > 0.05) {
-                cmd.sideSpeed = -0.5f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
-                cmd.mode = 2;
-            }
+            else if (auto_moving_state == 1) {
+                cmd.forwardSpeed = 0;
+                cmd.rotateSpeed = 0;
+                cmd.sideSpeed = 0;
+                cmd.mode = 1;
+                if (fabs(z - highstate.forwardPosition) > 0.05) {
+                    cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
+                    if (cmd.forwardSpeed < 0) {
+                        cmd.forwardSpeed = 3.0*cmd.forwardSpeed;
+                    }
+                    cmd.mode = 2;
+                }
+                if (fabs(x + highstate.sidePosition) > 0.05) {
+                    cmd.sideSpeed = -0.5f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
+                    cmd.mode = 2;
+                }
 
-            if (cmd.mode == 2) {
-                udp.SetSend(cmd);
-            }
-            else {
-                // cmd.forwardSpeed = 0.0f;
-                // cmd.sideSpeed = 0.0f;
-                // cmd.rotateSpeed = 0.0f;
-                // cmd.mode = 1;
-                printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
-                auto_moving_state = 0;
+                if (cmd.mode == 2) {
+                    udp.SetSend(cmd);
+                }
+                else {
+                    // cmd.forwardSpeed = 0.0f;
+                    // cmd.sideSpeed = 0.0f;
+                    // cmd.rotateSpeed = 0.0f;
+                    // cmd.mode = 1;
+                    printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
+                    auto_moving_state = 0;
+                }
             }
         }
         mutex.unlock();
