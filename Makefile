@@ -1,4 +1,4 @@
-all: udp_client udp_server
+all: udp_client udp_server tst
 
 udp_client: udp_client.o
 	g++ udp_client.o -o udp_client -pthread
@@ -11,3 +11,6 @@ udp_server: udp_server.o
 
 udp_server.o: udp_server.cpp
 	g++ -c udp_server.cpp -o udp_server.o
+
+tst: tst.cpp
+	g++ tst.cpp -o tst

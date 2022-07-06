@@ -60,6 +60,8 @@ public:
 
     int auto_moving_state = 0; //0: not auto_moving, 1: auto_moving
     double z = 0, x = 0;
+
+    bool robot_control = true;
 };
 
 
@@ -148,6 +150,9 @@ void Custom::momoUDPRecv() {
                 (*this).cmd.forwardSpeed = 0;
                 (*this).cmd.mode = 1;
                 auto_moving_state = 0;
+            }
+            else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
+                (*this).robot_control = true;
             }
         }
     }
