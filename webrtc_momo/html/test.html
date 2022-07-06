@@ -75,7 +75,18 @@
 
         recvonly.on('message', (event) => {
             if ( event.data.byteLength == 4) {
-                if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa || new Uint8Array(event.data)[0] == 0xa4 || new Uint8Array(event.data)[0] == 0x99 || new Uint8Array(event.data)[0] == 0x01 || new Uint8Array(event.data)[0] == 0x09) {
+                if (new Uint8Array(event.data)[0] == 0xa1 || new Uint8Array(event.data)[0] == 0xaa || new Uint8Array(event.data)[0] == 0xa4 || new Uint8Array(event.data)[0] == 0x99) {
+                    if (dataChannel) {
+                        console.log(new Uint8Array(event.data));
+                        if (dataChannel.readyState == 'open') {
+                            dataChannel.send(event.data);
+                        }
+                        else {
+                            connect();
+                        }
+                    }
+                }
+                if (new Int32Array(event.data) == 0x01010101 || new Int32Array(event.data) == 0x09090909) {
                     if (dataChannel) {
                         console.log(new Uint8Array(event.data));
                         if (dataChannel.readyState == 'open') {
