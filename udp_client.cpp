@@ -42,12 +42,12 @@ void momo_to_x86(void) {
             else if (buf_ptr[0] == 0x99 && buf_ptr[1] == 0x99 && buf_ptr[2] == 0x99 && buf_ptr[3] == 0x99) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             }
-            else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
-                sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            }
-            else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
-                sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            }
+            // else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
+            //     sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            // }
+            // else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
+            //     sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            // }
         }
 
     }

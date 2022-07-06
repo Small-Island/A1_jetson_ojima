@@ -86,17 +86,17 @@
                         }
                     }
                 }
-                if (new Int32Array(event.data) == 0x01010101 || new Int32Array(event.data) == 0x09090909) {
-                    if (dataChannel) {
-                        console.log(new Uint8Array(event.data));
-                        if (dataChannel.readyState == 'open') {
-                            dataChannel.send(event.data);
-                        }
-                        else {
-                            connect();
-                        }
-                    }
-                }
+                // if (new Int32Array(event.data) == 0x01010101 || new Int32Array(event.data) == 0x09090909) {
+                //     if (dataChannel) {
+                //         console.log(new Uint8Array(event.data));
+                //         if (dataChannel.readyState == 'open') {
+                //             dataChannel.send(event.data);
+                //         }
+                //         else {
+                //             connect();
+                //         }
+                //     }
+                // }
             }
         });
 
