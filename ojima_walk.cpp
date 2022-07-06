@@ -155,7 +155,7 @@ void Custom::momoUDPRecv() {
                 (*this).robot_control = true;
             }
             else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
-                (*this).robot_control = true;
+                (*this).robot_control = false;
             }
         }
     }
