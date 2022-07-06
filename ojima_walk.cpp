@@ -155,9 +155,11 @@ void Custom::momoUDPRecv() {
             }
             else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
                 (*this).robot_control = true;
+                auto_moving_state = 0;
             }
             else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
                 (*this).robot_control = false;
+                auto_moving_state = 0;
             }
         }
     }
