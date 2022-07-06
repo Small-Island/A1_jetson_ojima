@@ -1,6 +1,6 @@
 #include <cstdlib>
 
 int main(void) {
-    system("echo hello; sleep 5s; echo hello");
+    system("sudo ./ojima_walk");
     return 0;
 }
