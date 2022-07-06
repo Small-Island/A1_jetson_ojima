@@ -66,7 +66,9 @@ public:
 
 
 void Custom::UDPRecv() {
-    udp.Recv();
+    if (robot_control) {
+        udp.Recv();
+    }
 }
 
 void Custom::momoUDPRecv() {
@@ -151,12 +153,6 @@ void Custom::momoUDPRecv() {
                 (*this).cmd.mode = 1;
                 auto_moving_state = 0;
             }
-            else if (buf_ptr[0] == 0x01 && buf_ptr[1] == 0x01 && buf_ptr[2] == 0x01 && buf_ptr[3] == 0x01) {
-                (*this).robot_control = true;
-            }
-            else if (buf_ptr[0] == 0x09 && buf_ptr[1] == 0x09 && buf_ptr[2] == 0x09 && buf_ptr[3] == 0x09) {
-                (*this).robot_control = false;
-            }
         }
     }
 
@@ -166,7 +162,9 @@ void Custom::momoUDPRecv() {
 
 void Custom::UDPSend()
 {
-    udp.Send();
+    if (robot_control) {
+        udp.Send();
+    }
 }
 
 
