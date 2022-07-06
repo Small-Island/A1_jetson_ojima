@@ -104,7 +104,9 @@ void Custom::momoUDPRecv() {
                     cmd.pitch = 0;
                     cmd.yaw = 0;
                     (*this).cmd.mode = 1;
-                    robot_control = false;
+                    if (auto_moving_state == 0) {
+                        robot_control = false;
+                    }
                 }
                 else {
                     // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
