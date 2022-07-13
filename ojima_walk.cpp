@@ -275,7 +275,7 @@ void Custom::RobotControl()
                 (*this).cmd.rotateSpeed = 0;
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1) {
+                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).z > 0) {
                     (*this).auto_moving_state = 0;
                     (*this).udp.SetSend((*this).cmd);
                 }
