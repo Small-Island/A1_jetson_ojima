@@ -285,7 +285,7 @@ void Custom::RobotControl()
                         }
                         (*this).cmd.mode = 2;
                     }
-                    if (fabs((*tis).x + highstate.sidePosition) > 0.05) {
+                    if (fabs((*this).x + highstate.sidePosition) > 0.05) {
                         (*this).cmd.sideSpeed = -0.5f*((*this).x + highstate.sidePosition)/fabs((*this).x + highstate.sidePosition);
                         (*this).cmd.mode = 2;
                     }
