@@ -189,10 +189,10 @@ void Custom::realsenseUDPRecv() {
     };
 
     while (1) {
-        struct My_udp_data my_udp_data = {0};
+        struct My_udp_data my_udp_data = {0, 0};
         int recv_size = recv(sockfd, &my_udp_data, sizeof(struct My_udp_data), 0);
-        (*this).obstacle_detected_in_0_7m = my_udp_data.obstacle_detected_in_0_7m;
-        (*this).obstacle_detected_in_1_5m = my_udp_data.obstacle_detected_in_1_5m;
+        (*this).obstacle_detected_in_0_5m = my_udp_data.obstacle_detected_in_0_5m;
+        (*this).obstacle_detected_in_1_0m = my_udp_data.obstacle_detected_in_1_0m;
     }
 }
 
