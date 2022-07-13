@@ -1,6 +1,11 @@
 #include <cstdlib>
+#include <cstdio>
 
 int main(void) {
-    system("sudo ./ojima_walk");
+    struct Kozo {
+        int x;
+    };
+    struct Kozo r = {0};
+    printf("%d\n", r.x);
     return 0;
 }

@@ -38,6 +38,7 @@ public:
     void momoUDPRecv();
     void HighStateRecv();
 
+    void realsenseUDPRecv();
 
     Control control;
     UDP udp;
@@ -62,6 +63,16 @@ public:
     double z = 0, x = 0;
 
     bool robot_control = false;
+
+    char obstacle_detected_in_0_5m, obstacle_detected_in_1_0m;
+
+    double momo_rotatesSpeed = 0;
+    double momo_sideSpeed = 0;
+    double momo_forwardSpeed = 0;
+    double momo_mode = 0;
+    double momo_roll = 0;
+    double momo_pitch = 0;
+    double momo_yaw = 0;
 };
 
 
@@ -97,72 +108,92 @@ void Custom::momoUDPRecv() {
                 // cmd.sideSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
 
                 if (abs((int8_t)buf_ptr[1]) < 20 && abs((int8_t)buf_ptr[2]) < 20 && abs((int8_t)buf_ptr[3]) < 20 ) {
-                    (*this).cmd.sideSpeed = 0;
-                    (*this).cmd.rotateSpeed = 0;
-                    (*this).cmd.forwardSpeed = 0;
-                    cmd.roll  = 0;
-                    cmd.pitch = 0;
-                    cmd.yaw = 0;
-                    (*this).cmd.mode = 1;
+                    (*this).momo_sideSpeed = 0;
+                    (*this).momo_rotateSpeed = 0;
+                    (*this).momo_forwardSpeed = 0;
+                    (*this).momo_roll  = 0;
+                    (*this).momo_pitch = 0;
+                    (*this).momo_yaw = 0;
+                    (*this).momo_mode = 1;
                     if (auto_moving_state == 0) {
                         robot_control = false;
                     }
                 }
                 else {
                     // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
-                    (*this).cmd.rotateSpeed = 0.45*(int8_t)buf_ptr[2] /127.0;
-                    // (*this).cmd.rotateSpeed = 0;
-                    // (*this).cmd.forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
-                    (*this).cmd.roll  = 0;
-                    (*this).cmd.pitch = 0;
-                    (*this).cmd.yaw = 0;
-                    // (*this).cmd.rotateSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
-                    // (*this).cmd.forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
-                    (*this).cmd.mode = 2;
+                    (*this).momo_rotateSpeed = 0.45*(int8_t)buf_ptr[2] /127.0;
+                    // (*this).momo_rotateSpeed = 0;
+                    // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
+                    (*this).momo_roll  = 0;
+                    (*this).momo_pitch = 0;
+                    (*this).momo_yaw = 0;
+                    // (*this).momo_rotateSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
+                    // (*this).momo_forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
+                    (*this).momo_mode = 2;
                     robot_control = true;
                 }
             }
             else if (buf_ptr[0] == 0xa4) {
-                x = 1.0f*(int8_t)buf_ptr[2]/10.0;
-                z = 1.0f*(int8_t)buf_ptr[3]/10.0;
-                auto_moving_state = 1;
-                robot_control = true;
+                (*this).x = 1.0f*(int8_t)buf_ptr[2]/10.0;
+                (*this).z = 1.0f*(int8_t)buf_ptr[3]/10.0;
+                (*this).auto_moving_state = 1;
+                (*this).robot_control = true;
             }
             else if (buf_ptr[0] == 0xaa) {
                 (*this).jyja_arrival_time = std::chrono::system_clock::now();
                 // cmd.sideSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
                 if (buf_ptr[1] == 0x00 && buf_ptr[2] == 0x00 && buf_ptr[3] == 0x00 ) {
-                    (*this).cmd.sideSpeed = 0;
-                    (*this).cmd.rotateSpeed = 0;
-                    (*this).cmd.forwardSpeed = 0;
-                    cmd.roll  = 0;
-                    cmd.pitch = 0;
-                    cmd.yaw = 0;
-                    (*this).cmd.mode = 1;
+                    (*this).momo_sideSpeed = 0;
+                    (*this).momo_rotateSpeed = 0;
+                    (*this).momo_forwardSpeed = 0;
+                    (*this).momo_roll  = 0;
+                    (*this).momo_pitch = 0;
+                    (*this).momo_yaw = 0;
+                    (*this).momo_mode = 1;
                 }
                 else {
-                    (*this).cmd.sideSpeed = 0;
-                    (*this).cmd.rotateSpeed = 0;
-                    (*this).cmd.forwardSpeed = 0;
-                    (*this).cmd.roll = -(int8_t)buf_ptr[1] /127.0;
-                    (*this).cmd.pitch = (int8_t)buf_ptr[3] /127.0;
-                    // (*this).cmd.rotateSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
-                    // (*this).cmd.forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
-                    (*this).cmd.mode = 1;
+                    (*this).momo_sideSpeed = 0;
+                    (*this).momo_rotateSpeed = 0;
+                    (*this).momo_forwardSpeed = 0;
+                    (*this).momo_roll = -(int8_t)buf_ptr[1] /127.0;
+                    (*this).momo_pitch = (int8_t)buf_ptr[3] /127.0;
+                    // (*this).momo_rotateSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
+                    // (*this).momo_forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
+                    (*this).momo_mode = 1;
                 }
             }
             else if (buf_ptr[0] == 0x99 && buf_ptr[1] == 0x99 && buf_ptr[2] == 0x99 & buf_ptr[3] == 0x99) {
-                (*this).cmd.sideSpeed = 0;
-                (*this).cmd.rotateSpeed = 0;
-                (*this).cmd.forwardSpeed = 0;
-                (*this).cmd.mode = 1;
-                auto_moving_state = 0;
+                (*this).momo_sideSpeed = 0;
+                (*this).momo_rotateSpeed = 0;
+                (*this).momo_forwardSpeed = 0;
+                (*this).momo_mode = 1;
+                (*this).auto_moving_state = 0;
             }
         }
     }
 
     return;
 
+}
+
+void Custom::realsenseUDPRecv() {
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("0.0.0.0");
+    addr.sin_port = htons(4003);
+    bind(sockfd, (const struct sockaddr *)&addr, sizeof(addr));
+    struct My_udp_data {
+        char obstacle_detected_in_0_7m = 0;
+        char obstacle_detected_in_1_5m = 0;
+    };
+
+    while (1) {
+        struct My_udp_data my_udp_data = {0};
+        int recv_size = recv(sockfd, &my_udp_data, sizeof(struct My_udp_data), 0);
+        (*this).obstacle_detected_in_0_7m = my_udp_data.obstacle_detected_in_0_7m;
+        (*this).obstacle_detected_in_1_5m = my_udp_data.obstacle_detected_in_1_5m;
+    }
 }
 
 void Custom::UDPSend()
@@ -217,52 +248,59 @@ void Custom::RobotControl()
         show_count++;
 
         mutex.lock();
-        if (robot_control) {
-            if (auto_moving_state == 0) {
-                if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(500)) {
-                    cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                    cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
-                    udp.SetSend(cmd);
+        if ((*this).robot_control) {
+            if ((*this).auto_moving_state == 0) {
+                if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
+                    (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
+                    (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
+                    (*this).cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                    (*this).udp.SetSend((*this).cmd);
                 }
                 else {
-                    cmd.forwardSpeed = 0.0f;
-                    cmd.sideSpeed = 0.0f;
-                    cmd.rotateSpeed = 0.0f;
-                    cmd.roll  = 0;
-                    cmd.pitch = 0;
-                    cmd.yaw = 0;
-                    cmd.mode = 1;
-                    udp.SetSend(cmd);
-                    robot_control = false;
+                    (*this).cmd.forwardSpeed = 0.0f;
+                    (*this).cmd.sideSpeed = 0.0f;
+                    (*this).cmd.rotateSpeed = 0.0f;
+                    (*this).cmd.roll  = 0;
+                    (*this).cmd.pitch = 0;
+                    (*this).cmd.yaw = 0;
+                    (*this).cmd.mode = 1;
+                    (*this).udp.SetSend((*this).cmd);
+                    (*this).robot_control = false;
                 }
             }
-            else if (auto_moving_state == 1) {
-                cmd.forwardSpeed = 0;
-                cmd.rotateSpeed = 0;
-                cmd.sideSpeed = 0;
-                cmd.mode = 1;
-                if (fabs(z - highstate.forwardPosition) > 0.05) {
-                    cmd.forwardSpeed = 0.1f*(z - highstate.forwardPosition)/fabs(z - highstate.forwardPosition);
-                    if (cmd.forwardSpeed < 0) {
-                        cmd.forwardSpeed = 3.0*cmd.forwardSpeed;
-                    }
-                    cmd.mode = 2;
-                }
-                if (fabs(x + highstate.sidePosition) > 0.05) {
-                    cmd.sideSpeed = -0.5f*(x + highstate.sidePosition)/fabs(x + highstate.sidePosition);
-                    cmd.mode = 2;
-                }
-
-                if (cmd.mode == 2) {
-                    udp.SetSend(cmd);
+            else if ((*this).auto_moving_state == 1) {
+                (*this).cmd.forwardSpeed = 0;
+                (*this).cmd.rotateSpeed = 0;
+                (*this).cmd.sideSpeed = 0;
+                (*this).cmd.mode = 1;
+                if ((*this).obstacle_detected_in_0_5m == 1) {
+                    (*this).auto_moving_state = 0;
+                    (*this).udp.SetSend((*this).cmd);
                 }
                 else {
-                    // cmd.forwardSpeed = 0.0f;
-                    // cmd.sideSpeed = 0.0f;
-                    // cmd.rotateSpeed = 0.0f;
-                    // cmd.mode = 1;
-                    printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
-                    auto_moving_state = 0;
+                    if (fabs((*this).z - highstate.forwardPosition) > 0.05) {
+                        (*this).cmd.forwardSpeed = 0.1f*((*this).z - highstate.forwardPosition)/fabs((*this).z - highstate.forwardPosition);
+                        if ((*this).cmd.forwardSpeed < 0) {
+                            (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
+                        }
+                        (*this).cmd.mode = 2;
+                    }
+                    if (fabs((*tis).x + highstate.sidePosition) > 0.05) {
+                        (*this).cmd.sideSpeed = -0.5f*((*this).x + highstate.sidePosition)/fabs((*this).x + highstate.sidePosition);
+                        (*this).cmd.mode = 2;
+                    }
+
+                    if ((*this).cmd.mode == 2) {
+                        (*this).udp.SetSend((*this).cmd);
+                    }
+                    else {
+                        // cmd.forwardSpeed = 0.0f;
+                        // cmd.sideSpeed = 0.0f;
+                        // cmd.rotateSpeed = 0.0f;
+                        // cmd.mode = 1;
+                        printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
+                        (*this).auto_moving_state = 0;
+                    }
                 }
             }
         }
