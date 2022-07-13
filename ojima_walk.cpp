@@ -184,8 +184,8 @@ void Custom::realsenseUDPRecv() {
     addr.sin_port = htons(4003);
     bind(sockfd, (const struct sockaddr *)&addr, sizeof(addr));
     struct My_udp_data {
-        char obstacle_detected_in_0_7m = 0;
-        char obstacle_detected_in_1_5m = 0;
+        char obstacle_detected_in_0_5m = 0;
+        char obstacle_detected_in_1_0m = 0;
     };
 
     while (1) {
