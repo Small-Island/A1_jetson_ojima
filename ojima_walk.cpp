@@ -66,7 +66,7 @@ public:
 
     char obstacle_detected_in_0_5m, obstacle_detected_in_1_0m;
 
-    double momo_rotatesSpeed = 0;
+    double momo_rotateSpeed = 0;
     double momo_sideSpeed = 0;
     double momo_forwardSpeed = 0;
     double momo_mode = 0;
