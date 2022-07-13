@@ -331,6 +331,7 @@ int main(void)
 
     // std::thread th_HighStateRecv(&Custom::HighStateRecv, &custom);
     std::thread th_momoUDPRecv(&Custom::momoUDPRecv, &custom);
+    std::thread th_realsenseUDPRecv(&Custom::realsenseUDPRecv, &custom);
     // std::thread th_user_input(&Custom::user_input, &custom);
 
     std::thread th_RobotControl(&Custom::RobotControl, &custom);
