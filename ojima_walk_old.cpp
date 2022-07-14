@@ -63,7 +63,6 @@ public:
 
     int auto_moving_state = 0; //0: not auto_moving, 1: auto_moving
     double r = 0, theta = 0;
-    bool reset_rotate_position = false;
 
     bool robot_control = false;
 
@@ -136,7 +135,7 @@ void Custom::momoUDPRecv() {
                 }
                 else {
                     // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
-                    (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
+                    (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 50.0/120.0;
                     // (*this).momo_rotateSpeed = 0;
                     // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
                     (*this).momo_roll  = 0;
@@ -155,7 +154,6 @@ void Custom::momoUDPRecv() {
                 (*this).theta = acos(z)*(-1.0)*x/abs(x);
                 (*this).auto_moving_state = 1;
                 (*this).robot_control = true;
-                (*this).reset_rotate_position = true;
             }
             else if (buf_ptr[0] == 0xaa) {
                 (*this).jyja_arrival_time = std::chrono::system_clock::now();
@@ -273,12 +271,8 @@ void Custom::RobotControl()
 
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            if ((*this).reset_rotate_position) {
-                rotate_position = 0;
-                (*this).reset_rotate_position = 0;
-            }
-            rotate_position += (sum_rotateSpeed / 10.0)*0.1;
-            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
+            rotate_position += (sum_rotateSpeed / 10.0)*0.01;
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position * M_PI * 180.0);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
@@ -317,45 +311,14 @@ void Custom::RobotControl()
                     (*this).udp.SetSend((*this).cmd);
                 }
                 else {
-                    if (fabs((*this).theta - rotate_position) > 0.05) {
+                    if (fabs((*this).z - highstate.forwardPosition) > 0.05) {
                         (*this).cmd.forwardSpeed = 0.1f*((*this).z - highstate.forwardPosition)/fabs((*this).z - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
                             (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
                         }
                         (*this).cmd.mode = 2;
                     }
-
-                    if ((*this).cmd.mode == 2) {
-                        (*this).udp.SetSend((*this).cmd);
-                    }
-                    else {
-                        // cmd.forwardSpeed = 0.0f;
-                        // cmd.sideSpeed = 0.0f;
-                        // cmd.rotateSpeed = 0.0f;
-                        // cmd.mode = 1;
-                        printf("\n\n==============================================\n=============complete auto_moving 1=============\n==============================================\n\n");
-                        (*this).auto_moving_state = 2;
-                    }
-                }
-            }
-            else if ((*this).auto_moving_state == 2) {
-                (*this).cmd.forwardSpeed = 0;
-                (*this).cmd.rotateSpeed = 0;
-                (*this).cmd.sideSpeed = 0;
-                (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).z > 0) {
-                    (*this).auto_moving_state = 0;
-                    (*this).udp.SetSend((*this).cmd);
-                }
-                else {
-                    if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
-                        (*this).cmd.forwardSpeed = 0.1f*((*this).z - highstate.forwardPosition)/fabs((*this).z - highstate.forwardPosition);
-                        if ((*this).cmd.forwardSpeed < 0) {
-                            (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
-                        }
-                        (*this).cmd.mode = 2;
-                    }
-                    if (fabs(0 + highstate.sidePosition) > 0.05) {
+                    if (fabs((*this).x + highstate.sidePosition) > 0.05) {
                         (*this).cmd.sideSpeed = -0.5f*((*this).x + highstate.sidePosition)/fabs((*this).x + highstate.sidePosition);
                         (*this).cmd.mode = 2;
                     }
@@ -368,7 +331,7 @@ void Custom::RobotControl()
                         // cmd.sideSpeed = 0.0f;
                         // cmd.rotateSpeed = 0.0f;
                         // cmd.mode = 1;
-                        printf("\n\n==============================================\n=============complete auto_moving 2=============\n==============================================\n\n");
+                        printf("\n\n==============================================\n=============complete auto_moving=============\n==============================================\n\n");
                         (*this).auto_moving_state = 0;
                     }
                 }
