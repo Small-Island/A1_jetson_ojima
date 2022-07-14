@@ -252,9 +252,11 @@ void Custom::RobotControl()
 
         if (show_count >= 0 && show_count <= 9 ) {
             show_count++;
-            sum_sidePosition += highstate.sidePosition;
-            sum_forwardPosition += highstate.forwardPosition;
-            sum_rotateSpeed += highstate.rotateSpeed;
+            if ((*this).robot_control) {
+                sum_sidePosition += highstate.sidePosition;
+                sum_forwardPosition += highstate.forwardPosition;
+                sum_rotateSpeed += highstate.rotateSpeed;
+            }
         }
         if (show_count >= 10) {
             int p_x = (sum_sidePosition / 10.0)* 100.0;
