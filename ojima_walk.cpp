@@ -244,6 +244,7 @@ void Custom::RobotControl()
     addr.sin_port = htons(4002);
 
     double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0;
+    double rotate_position = 0;
 
     while (1) {
         udp.GetRecv(highstate);
@@ -266,7 +267,8 @@ void Custom::RobotControl()
 
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec)\n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0);
+            rotate_position += (sum_rotateSpeed / 10.0)*0.01;
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position * M_PI * 180.0);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
