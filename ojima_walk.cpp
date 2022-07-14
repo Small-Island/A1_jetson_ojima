@@ -287,7 +287,7 @@ void Custom::RobotControl()
 
                     (*this).cmd.forwardSpeed = 0.0f;
                     (*this).cmd.sideSpeed = 0.0f;
-                    (*this).cmd.rotateSpeed = 10.0/180.0*M_PI;
+                    (*this).cmd.rotateSpeed = 10.0/120.0;
                     (*this).cmd.roll  = 0;
                     (*this).cmd.pitch = 0;
                     (*this).cmd.yaw = 0;
