@@ -293,7 +293,6 @@ void Custom::RobotControl()
                     (*this).cmd.yaw = 0;
                     (*this).cmd.mode = 2;
                     (*this).udp.SetSend((*this).cmd);
-                    (*this).robot_control = false;
             }
             else if ((*this).auto_moving_state == 1) {
                 (*this).cmd.forwardSpeed = 0;
