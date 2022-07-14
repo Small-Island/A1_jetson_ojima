@@ -291,7 +291,7 @@ void Custom::RobotControl()
                     (*this).cmd.roll  = 0;
                     (*this).cmd.pitch = 0;
                     (*this).cmd.yaw = 0;
-                    (*this).cmd.mode = 1;
+                    (*this).cmd.mode = 2;
                     (*this).udp.SetSend((*this).cmd);
                     (*this).robot_control = false;
             }
