@@ -22,6 +22,8 @@ Use of this source code is governed by the MPL-2.0 license, see LICENSE.
 #include <thread>
 #include <mutex>
 
+#include <cmath>
+
 using namespace UNITREE_LEGGED_SDK;
 
 class Custom
@@ -107,7 +109,19 @@ void Custom::momoUDPRecv() {
                 (*this).jyja_arrival_time = std::chrono::system_clock::now();
                 // cmd.sideSpeed =  50*(int8_t)((buf_ptr[0] & 0x0000ff00) >> 8) /127.0;
 
-                if (abs((int8_t)buf_ptr[1]) < 20 && abs((int8_t)buf_ptr[2]) < 20 && abs((int8_t)buf_ptr[3]) < 20 ) {
+                // if (abs((int8_t)buf_ptr[1]) < 20 && abs((int8_t)buf_ptr[2]) < 20 && abs((int8_t)buf_ptr[3]) < 20 ) {
+                //     (*this).momo_sideSpeed = 0;
+                //     (*this).momo_rotateSpeed = 0;
+                //     (*this).momo_forwardSpeed = 0;
+                //     (*this).momo_roll  = 0;
+                //     (*this).momo_pitch = 0;
+                //     (*this).momo_yaw = 0;
+                //     (*this).momo_mode = 1;
+                //     if (auto_moving_state == 0) {
+                //         robot_control = false;
+                //     }
+                // }
+                if (abs((int8_t)buf_ptr[2]) < 10) {
                     (*this).momo_sideSpeed = 0;
                     (*this).momo_rotateSpeed = 0;
                     (*this).momo_forwardSpeed = 0;
@@ -121,7 +135,7 @@ void Custom::momoUDPRecv() {
                 }
                 else {
                     // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
-                    (*this).momo_rotateSpeed = 0.45*(int8_t)buf_ptr[2] /127.0;
+                    (*this).momo_rotateSpeed = 45.0/180.0*M_PI*(int8_t)buf_ptr[2] /127.0;
                     // (*this).momo_rotateSpeed = 0;
                     // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
                     (*this).momo_roll  = 0;
