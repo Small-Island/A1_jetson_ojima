@@ -243,25 +243,35 @@ void Custom::RobotControl()
     addr.sin_addr.s_addr = inet_addr("192.168.123.12");
     addr.sin_port = htons(4002);
 
+    double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0;
+
     while (1) {
         udp.GetRecv(highstate);
         // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
 
-        if (show_count > 10) {
-            int p_x = highstate.sidePosition* 100.0;
+        if (show_count >= 0 && (show_count <= 9 ) {
+            show_count++;
+            sum_sidePosition += highstate.sidePosition;
+            sum_forwardPosition += highstate.forwardPosition;
+            sum_rotateSpeed += highstate.rotateSpeed;
+        }
+        if (show_count >= 10) {
+            int p_x = (sum_sidePosition / 10.0)* 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
 
-            int p_z = highstate.forwardPosition * 100.0;
+            int p_z = (sum_forwardPosition / 10.0) * 100.0;
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec)\n", robot_control, auto_moving_state, highstate.forwardPosition, highstate.sidePosition, highstate.rotateSpeed / M_PI * 180.0);
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec)\n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0);
             show_count = 0;
+            sum_forwardPosition = 0;
+            sum_sidePosition = 0;
+            sum_rotateSpeed = 0;
         }
-        show_count++;
 
         mutex.lock();
         if ((*this).robot_control) {
