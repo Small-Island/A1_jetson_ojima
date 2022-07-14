@@ -63,7 +63,7 @@ public:
 
     int auto_moving_state = 0; //0: not auto_moving, 1: auto_moving
     double r = 0, theta = 0;
-    bool reset_rotate_position = false;
+    bool reset_position = false;
 
     bool robot_control = false;
 
@@ -156,7 +156,7 @@ void Custom::momoUDPRecv() {
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
                 (*this).robot_control = true;
-                (*this).reset_rotate_position = true;
+                (*this).reset_position = true;
             }
             else if (buf_ptr[0] == 0xaa) {
                 (*this).jyja_arrival_time = std::chrono::system_clock::now();
@@ -250,6 +250,8 @@ void Custom::RobotControl()
 
     double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0;
     double rotate_position = 0;
+    double old_sum_forwardPosition = 0;
+    double position_x = 0, position_z = 0;
 
     while (1) {
         udp.GetRecv(highstate);
@@ -264,26 +266,31 @@ void Custom::RobotControl()
             }
         }
         if (show_count >= 10) {
-            int p_x = (sum_sidePosition / 10.0)* 100.0;
+            if ((*this).reset_position) {
+                rotate_position = 0;
+                position_x = 0;
+                position_z = 0;
+                (*this).reset_position = 0;
+            }
+            position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos((sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
+            position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin(sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
+            int p_x = position_x* 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
 
-            int p_z = (sum_forwardPosition / 10.0) * 100.0;
+            int p_z = position_z * 100.0;
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            if ((*this).reset_rotate_position) {
-                rotate_position = 0;
-                (*this).reset_rotate_position = 0;
-            }
             rotate_position += (sum_rotateSpeed / 10.0)*0.1;
             printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %.2lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
             sum_rotateSpeed = 0;
+            old_sum_forwardPosition = sum_forwardPosition;
         }
 
         mutex.lock();
