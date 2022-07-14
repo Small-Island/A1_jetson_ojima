@@ -79,8 +79,8 @@ public:
 
 
 void Custom::UDPRecv() {
-    if (robot_control) {
-        udp.Recv();
+    if ((*this).robot_control) {
+        (*this).udp.Recv();
     }
 }
 
@@ -135,7 +135,7 @@ void Custom::momoUDPRecv() {
                 }
                 else {
                     // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
-                    (*this).momo_rotateSpeed = 45.0/180.0*M_PI*(int8_t)buf_ptr[2] /127.0;
+                    (*this).momo_rotateSpeed = 10.0/180.0*M_PI*(int8_t)buf_ptr[2] /127.0;
                     // (*this).momo_rotateSpeed = 0;
                     // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
                     (*this).momo_roll  = 0;
@@ -214,8 +214,8 @@ void Custom::realsenseUDPRecv() {
 
 void Custom::UDPSend()
 {
-    if (robot_control) {
-        udp.Send();
+    if ((*this).robot_control) {
+        (*this).udp.Send();
     }
 }
 
@@ -270,6 +270,7 @@ void Custom::RobotControl()
                     (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
                     (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
                     (*this).cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                    (*this).cmd.mode = (*this).momo_mode;
                     (*this).udp.SetSend((*this).cmd);
                 }
                 else {
