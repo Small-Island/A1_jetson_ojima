@@ -152,7 +152,7 @@ void Custom::momoUDPRecv() {
                 double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
                 double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
                 (*this).r = sqrt(x*x + z*z);
-                (*this).theta = acos(z)*(-1.0)*x/abs(x);
+                (*this).theta = acos(z)*(-1.0)*x/fabs(x);
                 (*this).auto_moving_state = 1;
                 (*this).robot_control = true;
                 (*this).reset_rotate_position = true;
@@ -312,13 +312,13 @@ void Custom::RobotControl()
                 (*this).cmd.rotateSpeed = 0;
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).z > 0) {
+                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
                     (*this).auto_moving_state = 0;
                     (*this).udp.SetSend((*this).cmd);
                 }
                 else {
                     if (fabs((*this).theta - rotate_position) > 0.05) {
-                        (*this).cmd.forwardSpeed = 0.1f*((*this).z - highstate.forwardPosition)/fabs((*this).z - highstate.forwardPosition);
+                        (*this).cmd.forwardSpeed = 0.1f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
                             (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
                         }
@@ -356,7 +356,7 @@ void Custom::RobotControl()
                         (*this).cmd.mode = 2;
                     }
                     if (fabs(0 + highstate.sidePosition) > 0.05) {
-                        (*this).cmd.sideSpeed = -0.5f*((*this).x + highstate.sidePosition)/fabs((*this).x + highstate.sidePosition);
+                        (*this).cmd.sideSpeed = -0.5f*(0 + highstate.sidePosition)/fabs(0 + highstate.sidePosition);
                         (*this).cmd.mode = 2;
                     }
 
