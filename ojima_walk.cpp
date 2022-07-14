@@ -272,9 +272,9 @@ void Custom::RobotControl()
                 position_z = 0;
                 (*this).reset_position = 0;
             }
-            position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos((sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
-            position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin((sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
-            int p_x = position_x* 100.0;
+            position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos(rotatePosition/180.0*M_PI + M_PI_2);
+            position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin(rotatePosition/180.0*M_PI + M_PI_2);
+            int p_x = position_x * 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
 
@@ -285,7 +285,7 @@ void Custom::RobotControl()
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             rotate_position += (sum_rotateSpeed / 10.0)*0.1;
-            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %.2lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %.2lf (deg) \n", robot_control, auto_moving_state, sum_forwardPosition / 10.0, sum_sidePosition / 10.0, (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
