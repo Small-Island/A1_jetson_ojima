@@ -343,13 +343,13 @@ void Custom::RobotControl()
                 (*this).cmd.rotateSpeed = 0;
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).z > 0) {
+                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
                     (*this).auto_moving_state = 0;
                     (*this).udp.SetSend((*this).cmd);
                 }
                 else {
                     if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
-                        (*this).cmd.forwardSpeed = 0.1f*((*this).z - highstate.forwardPosition)/fabs((*this).z - highstate.forwardPosition);
+                        (*this).cmd.forwardSpeed = 0.1f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
                             (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
                         }
