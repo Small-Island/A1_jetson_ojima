@@ -273,7 +273,7 @@ void Custom::RobotControl()
                 (*this).reset_position = 0;
             }
             position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos((sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
-            position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin(sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
+            position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin((sum_rotateSpeed / 10.0)*0.1/180.0*M_PI + M_PI_2);
             int p_x = position_x* 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
