@@ -153,6 +153,7 @@ void Custom::momoUDPRecv() {
                 double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
                 (*this).r = sqrt(x*x + z*z);
                 (*this).theta = acos(z)*(-1.0)*x/fabs(x);
+                printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0)
                 (*this).auto_moving_state = 1;
                 (*this).robot_control = true;
                 (*this).reset_rotate_position = true;
@@ -278,7 +279,7 @@ void Custom::RobotControl()
                 (*this).reset_rotate_position = 0;
             }
             rotate_position += (sum_rotateSpeed / 10.0)*0.1;
-            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %.2lf (deg) \n", robot_control, auto_moving_state, (sum_forwardPosition / 10.0), (sum_sidePosition / 10.0), (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
@@ -313,8 +314,8 @@ void Custom::RobotControl()
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
                 if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
-                    (*this).auto_moving_state = 0;
-                    (*this).udp.SetSend((*this).cmd);
+                    // (*this).auto_moving_state = 0;
+                    // (*this).udp.SetSend((*this).cmd);
                 }
                 else {
                     if (fabs((*this).theta - rotate_position) > 0.05) {
@@ -344,8 +345,8 @@ void Custom::RobotControl()
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
                 if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
-                    (*this).auto_moving_state = 0;
-                    (*this).udp.SetSend((*this).cmd);
+                    // (*this).auto_moving_state = 0;
+                    // (*this).udp.SetSend((*this).cmd);
                 }
                 else {
                     if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
