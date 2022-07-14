@@ -258,7 +258,7 @@ void Custom::RobotControl()
 
             uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
             sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
-            printf("%d, auto_moving_state %d forwardPosition %lf sidePosition %lf\n", robot_control, auto_moving_state, highstate.forwardPosition, highstate.sidePosition);
+            printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec)\n", robot_control, auto_moving_state, highstate.forwardPosition, highstate.sidePosition, highstate.rotateSpeed);
             show_count = 0;
         }
         show_count++;
