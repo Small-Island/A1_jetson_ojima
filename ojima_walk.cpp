@@ -319,10 +319,7 @@ void Custom::RobotControl()
                 }
                 else {
                     if (fabs((*this).theta - rotate_position) > 0.05) {
-                        (*this).cmd.forwardSpeed = 0.1f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
-                        if ((*this).cmd.forwardSpeed < 0) {
-                            (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
-                        }
+                        (*this).cmd.rotateSpeed = 45.0/120.0 * (*this).theta/fabs((*this).theta);
                         (*this).cmd.mode = 2;
                     }
 
