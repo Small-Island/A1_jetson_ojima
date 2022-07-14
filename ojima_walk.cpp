@@ -266,24 +266,34 @@ void Custom::RobotControl()
         mutex.lock();
         if ((*this).robot_control) {
             if ((*this).auto_moving_state == 0) {
-                if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
-                    (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
-                    (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                    (*this).cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
-                    (*this).cmd.mode = (*this).momo_mode;
-                    (*this).udp.SetSend((*this).cmd);
-                }
-                else {
+                // if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
+                //     (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
+                //     (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
+                //     (*this).cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                //     (*this).cmd.mode = (*this).momo_mode;
+                //     (*this).udp.SetSend((*this).cmd);
+                // }
+                // else {
+                //     (*this).cmd.forwardSpeed = 0.0f;
+                //     (*this).cmd.sideSpeed = 0.0f;
+                //     (*this).cmd.rotateSpeed = 0.0f;
+                //     (*this).cmd.roll  = 0;
+                //     (*this).cmd.pitch = 0;
+                //     (*this).cmd.yaw = 0;
+                //     (*this).cmd.mode = 1;
+                //     (*this).udp.SetSend((*this).cmd);
+                //     (*this).robot_control = false;
+                // }
+
                     (*this).cmd.forwardSpeed = 0.0f;
                     (*this).cmd.sideSpeed = 0.0f;
-                    (*this).cmd.rotateSpeed = 0.0f;
+                    (*this).cmd.rotateSpeed = 10.0/180.0*M_PI;
                     (*this).cmd.roll  = 0;
                     (*this).cmd.pitch = 0;
                     (*this).cmd.yaw = 0;
                     (*this).cmd.mode = 1;
                     (*this).udp.SetSend((*this).cmd);
                     (*this).robot_control = false;
-                }
             }
             else if ((*this).auto_moving_state == 1) {
                 (*this).cmd.forwardSpeed = 0;
