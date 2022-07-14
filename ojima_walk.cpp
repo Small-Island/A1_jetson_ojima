@@ -152,7 +152,7 @@ void Custom::momoUDPRecv() {
                 double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
                 double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
                 (*this).r = sqrt(x*x + z*z);
-                (*this).theta = acos(z)*(-1.0)*x/fabs(x);
+                (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
                 (*this).robot_control = true;
