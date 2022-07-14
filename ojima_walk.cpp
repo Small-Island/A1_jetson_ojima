@@ -313,11 +313,11 @@ void Custom::RobotControl()
                 (*this).cmd.rotateSpeed = 0;
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
-                    // (*this).auto_moving_state = 0;
-                    // (*this).udp.SetSend((*this).cmd);
-                }
-                else {
+                // if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
+                //     // (*this).auto_moving_state = 0;
+                //     // (*this).udp.SetSend((*this).cmd);
+                // }
+                // else {
                     if (fabs((*this).theta - rotate_position) > 0.05) {
                         (*this).cmd.rotateSpeed = 45.0/120.0 * (*this).theta/fabs((*this).theta);
                         (*this).cmd.mode = 2;
@@ -334,18 +334,18 @@ void Custom::RobotControl()
                         printf("\n\n==============================================\n=============complete auto_moving 1=============\n==============================================\n\n");
                         (*this).auto_moving_state = 2;
                     }
-                }
+                // }
             }
             else if ((*this).auto_moving_state == 2) {
                 (*this).cmd.forwardSpeed = 0;
                 (*this).cmd.rotateSpeed = 0;
                 (*this).cmd.sideSpeed = 0;
                 (*this).cmd.mode = 1;
-                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
-                    // (*this).auto_moving_state = 0;
-                    // (*this).udp.SetSend((*this).cmd);
-                }
-                else {
+                // if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
+                //     // (*this).auto_moving_state = 0;
+                //     // (*this).udp.SetSend((*this).cmd);
+                // }
+                // else {
                     if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
                         (*this).cmd.forwardSpeed = 0.1f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
@@ -369,7 +369,7 @@ void Custom::RobotControl()
                         printf("\n\n==============================================\n=============complete auto_moving 2=============\n==============================================\n\n");
                         (*this).auto_moving_state = 0;
                     }
-                }
+                // }
             }
         }
         mutex.unlock();
