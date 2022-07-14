@@ -249,7 +249,7 @@ void Custom::RobotControl()
         udp.GetRecv(highstate);
         // printf("forwardSpeed %lf\n", highstate.forwardSpeed);
 
-        if (show_count >= 0 && (show_count <= 9 ) {
+        if (show_count >= 0 && show_count <= 9 ) {
             show_count++;
             sum_sidePosition += highstate.sidePosition;
             sum_forwardPosition += highstate.forwardPosition;
