@@ -282,8 +282,12 @@ void Custom::RobotControl()
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
-            uint8_t buf_ptr[6] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz};
-            sendto(sockfd, buf_ptr, 6*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            int p_rot = rotatePosition / M_PI * 180.0 * 100.0;
+            uint8_t hrot = (uint8_t)((uint16_t)(p_rot & 0xff00) >> 8);
+            uint8_t lrot = (uint8_t)(p_rot & 0x00ff);
+
+            uint8_t buf_ptr[8] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz, hrot, lrot};
+            sendto(sockfd, buf_ptr, 8*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             rotate_position += (sum_rotateSpeed / 10.0)*0.1;
             printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotatePosition %.2lf (deg) \n", robot_control, auto_moving_state, sum_forwardPosition / 10.0, sum_sidePosition / 10.0, (sum_rotateSpeed / 10.0) / M_PI * 180.0, rotate_position / M_PI * 180.0);
             show_count = 0;
