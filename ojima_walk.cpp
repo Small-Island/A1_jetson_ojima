@@ -76,6 +76,8 @@ public:
     double momo_roll = 0;
     double momo_pitch = 0;
     double momo_yaw = 0;
+
+    double rotatePosition = 0;
 };
 
 
@@ -155,6 +157,7 @@ void Custom::momoUDPRecv() {
                 (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
+                (*this).rotatePosition = 0;
                 (*this).robot_control = true;
                 (*this).reset_position = true;
             }
@@ -249,7 +252,7 @@ void Custom::RobotControl()
     addr.sin_port = htons(4002);
 
     double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0;
-    double rotate_position = 0;
+    (*this).rotate_position = 0;
     double old_sum_forwardPosition = 0;
     double position_x = 0, position_z = 0;
 
