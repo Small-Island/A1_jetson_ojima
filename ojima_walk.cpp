@@ -332,7 +332,7 @@ void Custom::RobotControl()
                 //     // (*this).udp.SetSend((*this).cmd);
                 // }
                 // else {
-                    if (fabs((*this).theta - rotate_position) > 0.05) {
+                    if (fabs((*this).theta - (*this).rotate_position) > 0.05) {
                         (*this).cmd.rotateSpeed = 45.0/120.0 * (*this).theta/fabs((*this).theta);
                         (*this).cmd.mode = 2;
                     }
