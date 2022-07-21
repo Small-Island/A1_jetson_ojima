@@ -296,6 +296,7 @@ void Custom::RobotControl()
             sendto(sockfd, buf_ptr, 8*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             (*this).rotate_position += (sum_rotateSpeed / 10.0)*0.1;
             printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotate_position %.2lf (deg) \n", robot_control, auto_moving_state, sum_forwardPosition / 10.0, sum_sidePosition / 10.0, (sum_rotateSpeed / 10.0) / M_PI * 180.0, (*this).rotate_position / M_PI * 180.0);
+            printf("x %.2lf(m) z %.2lf(m) \n", position_x, position_z);
             show_count = 0;
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
