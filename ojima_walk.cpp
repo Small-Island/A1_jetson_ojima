@@ -154,7 +154,15 @@ void Custom::momoUDPRecv() {
                 double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
                 double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
                 (*this).r = sqrt(x*x + z*z);
-                (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
+                if (0 < x && x < 0.0001) {
+                    (*this).theta = M_PI;
+                }
+                else if (-0.0001 < x && x <= 0) {
+                    (*this).theta = -M_PI;
+                }
+                else {
+                    (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
+                }
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
                 (*this).rotate_position = 0;
