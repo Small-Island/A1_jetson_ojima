@@ -273,6 +273,9 @@ void Custom::RobotControl()
                 (*this).rotate_position = 0;
                 position_x = 0;
                 position_z = 0;
+                sum_forwardPosition = 0;
+                sum_rotateSpeed = 0;
+                sum_rotateSpeed = 0;
                 (*this).reset_position = 0;
             }
             position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos((*this).rotate_position + M_PI_2);
