@@ -77,7 +77,7 @@ public:
     double momo_pitch = 0;
     double momo_yaw = 0;
 
-    double rotatePosition = 0;
+    double rotate_position = 0;
 };
 
 
