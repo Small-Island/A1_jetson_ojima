@@ -323,7 +323,7 @@ void Custom::RobotControl()
                 if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
                     (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
                     // (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                    (*this).cmd.sideSpeed = (*this).momo_rotateSpeed;
+                    (*this).cmd.sideSpeed = (*this).momo_sideSpeed;
                     (*this).cmd.mode = (*this).momo_mode;
                     (*this).udp.SetSend((*this).cmd);
                 }
