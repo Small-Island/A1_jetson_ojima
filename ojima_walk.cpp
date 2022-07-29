@@ -137,7 +137,7 @@ void Custom::momoUDPRecv() {
                     }
                 }
                 else {
-                    (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;            
+                    (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
                     (*this).momo_sideSpeed = -0.45 * (int8_t)buf_ptr[2]/127.0;
 
                     // (*this).momo_rotateSpeed = 0;
@@ -347,6 +347,7 @@ void Custom::RobotControl()
                 // else {
                     if (fabs((*this).theta - (*this).rotate_position) > 0.05) {
                         (*this).cmd.rotateSpeed = 45.0/120.0 * (*this).theta/fabs((*this).theta);
+                        (*this).cmd.sideSpeed = -0.45 * (*this).theta/fabs((*this).theta);
                         (*this).cmd.mode = 2;
                     }
 
