@@ -137,8 +137,14 @@ void Custom::momoUDPRecv() {
                     }
                 }
                 else {
-                    // (*this).cmd.sideSpeed = 0.5*(int8_t)buf_ptr[1]/127.0;
+                    (*this).momo_sideSpeed = 0.1;
                     (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
+                    if ((*this).momo_rotateSpeed > 0) {
+                        (*this).momo_sideSpeed = 0.1;
+                    }
+                    else {
+                        (*this).momo_sideSpeed = -0.1;
+                    }
                     // (*this).momo_rotateSpeed = 0;
                     // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
                     (*this).momo_roll  = 0;
@@ -317,8 +323,8 @@ void Custom::RobotControl()
             if ((*this).auto_moving_state == 0) {
                 if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
                     (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
-                    (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
-                    (*this).cmd.sideSpeed = -0.3f*highstate.sidePosition/fabs(highstate.sidePosition);
+                    // (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
+                    (*this).cmd.sideSpeed = (*this).momo_rotateSpeed;
                     (*this).cmd.mode = (*this).momo_mode;
                     (*this).udp.SetSend((*this).cmd);
                 }
