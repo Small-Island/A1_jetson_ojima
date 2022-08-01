@@ -152,18 +152,20 @@ void Custom::momoUDPRecv() {
                 }
             }
             else if (buf_ptr[0] == 0xa4) {
-                double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
-                double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
-                (*this).r = sqrt(x*x + z*z);
-                if (0 < x && x < 0.0001) {
-                    (*this).theta = M_PI;
-                }
-                else if (-0.0001 < x && x <= 0) {
-                    (*this).theta = -M_PI;
-                }
-                else {
-                    (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
-                }
+                // double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
+                // double z = 1.0f*(int8_t)buf_ptr[3]/10.0;
+                // (*this).r = sqrt(x*x + z*z);
+                // if (0 < x && x < 0.0001) {
+                //     (*this).theta = M_PI;
+                // }
+                // else if (-0.0001 < x && x <= 0) {
+                //     (*this).theta = -M_PI;
+                // }
+                // else {
+                //     (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
+                // }
+                (*this).r = 1.0f*(int8_t)buf_ptr[2]/10.0;
+                (*this).theta = 1.0f*(int8_t)buf_ptr[3]/2.0;
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
                 (*this).rotate_position = 0;
@@ -347,7 +349,7 @@ void Custom::RobotControl()
                 // else {
                     if (fabs((*this).theta - (*this).rotate_position) > 0.05) {
                         (*this).cmd.rotateSpeed = 45.0/120.0 * (*this).theta/fabs((*this).theta);
-                        (*this).cmd.sideSpeed = -0.45 * (*this).theta/fabs((*this).theta);
+                        (*this).cmd.sideSpeed = 0.45 * (*this).theta/fabs((*this).theta);
                         (*this).cmd.mode = 2;
                     }
 
