@@ -165,7 +165,7 @@ void Custom::momoUDPRecv() {
                 //     (*this).theta =  acos(z/r)*(-1.0)*x/fabs(x);
                 // }
                 (*this).r = 1.0f*(int8_t)buf_ptr[2]/10.0;
-                (*this).theta = 1.0f*(int8_t)buf_ptr[3]/2.0 / 180.0 * M_PI;
+                (*this).theta = 1.0f*(int8_t)buf_ptr[3]*2.0 / 180.0 * M_PI;
                 printf("r %lf theta %lf\n", (*this).r, (*this).theta / M_PI * 180.0);
                 (*this).auto_moving_state = 1;
                 (*this).rotate_position = 0;
