@@ -139,6 +139,7 @@ void Custom::momoUDPRecv() {
                 else {
                     (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
                     (*this).momo_sideSpeed = 0.45 * (int8_t)buf_ptr[2]/127.0;
+                    (*this).momo_forwardSpeed = 0;
 
                     // (*this).momo_rotateSpeed = 0;
                     // (*this).momo_forwardSpeed = 0.5*(int8_t)buf_ptr[3] /127.0;
@@ -320,7 +321,7 @@ void Custom::RobotControl()
             if ((*this).auto_moving_state == 0) {
                 if (std::chrono::system_clock::now() - this->jyja_arrival_time < std::chrono::milliseconds(250)) {
                     (*this).cmd.rotateSpeed = (*this).momo_rotateSpeed;
-                    // (*this).cmd.forwardSpeed = -0.05f*highstate.forwardPosition/fabs(highstate.forwardPosition);
+                    (*this).cmd.forwardSpeed = (*this).momo_forwardSpeed;
                     (*this).cmd.sideSpeed = (*this).momo_sideSpeed;
                     (*this).cmd.mode = (*this).momo_mode;
                     (*this).udp.SetSend((*this).cmd);
