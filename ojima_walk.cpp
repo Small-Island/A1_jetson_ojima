@@ -375,11 +375,11 @@ void Custom::RobotControl()
                 if ((*this).r < 0.05) {
                     auto_moving_state = 0;
                 }
-                // if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
-                //     // (*this).auto_moving_state = 0;
-                //     // (*this).udp.SetSend((*this).cmd);
-                // }
-                // else {
+                if ((*this).obstacle_detected_in_0_5m == 1 && (*this).r > 0) {
+                    (*this).auto_moving_state = 0;
+                    (*this).udp.SetSend((*this).cmd);
+                }
+                else {
                     if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
                         (*this).cmd.forwardSpeed = 0.1f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
@@ -387,10 +387,10 @@ void Custom::RobotControl()
                         }
                         (*this).cmd.mode = 2;
                     }
-                    if (fabs(0 + highstate.sidePosition) > 0.05) {
-                        (*this).cmd.sideSpeed = -0.3f*(0 + highstate.sidePosition)/fabs(0 + highstate.sidePosition);
-                        (*this).cmd.mode = 2;
-                    }
+                    // if (fabs(0 + highstate.sidePosition) > 0.05) {
+                    //     (*this).cmd.sideSpeed = -0.3f*(0 + highstate.sidePosition)/fabs(0 + highstate.sidePosition);
+                    //     (*this).cmd.mode = 2;
+                    // }
 
                     if ((*this).cmd.mode == 2) {
                         (*this).udp.SetSend((*this).cmd);
@@ -403,7 +403,7 @@ void Custom::RobotControl()
                         printf("\n\n==============================================\n=============complete auto_moving 2=============\n==============================================\n\n");
                         (*this).auto_moving_state = 0;
                     }
-                // }
+                }
             }
         }
         mutex.unlock();
