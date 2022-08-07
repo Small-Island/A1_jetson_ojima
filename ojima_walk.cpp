@@ -49,9 +49,6 @@ public:
     int motiontime = 0;
     float dt = 0.005;     // 0.001~0.01
 
-    int sockfd;
-    struct sockaddr_in addr;
-
 
     std::chrono::system_clock::time_point jyja_arrival_time;
 
