@@ -292,11 +292,11 @@ void Custom::RobotControl()
             }
             position_x = position_x + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*cos((*this).rotate_position + M_PI_2);
             position_z = position_z + (sum_forwardPosition/10.0 - old_sum_forwardPosition/10.0)*sin((*this).rotate_position + M_PI_2);
-            int p_x = (*this).position_x * 100.0;
+            int p_x = position_x * 100.0;
             uint8_t hx = (uint8_t)((uint16_t)(p_x & 0xff00) >> 8);
             uint8_t lx = (uint8_t)(p_x & 0x00ff);
 
-            int p_z = (*this).position_z * 100.0;
+            int p_z = position_z * 100.0;
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
