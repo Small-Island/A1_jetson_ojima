@@ -381,7 +381,7 @@ void Custom::RobotControl()
                 }
                 else {
                     if (fabs((*this).r - highstate.forwardPosition) > 0.05) {
-                        (*this).cmd.forwardSpeed = 0.4f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
+                        (*this).cmd.forwardSpeed = 0.3f*((*this).r - highstate.forwardPosition)/fabs((*this).r - highstate.forwardPosition);
                         if ((*this).cmd.forwardSpeed < 0) {
                             (*this).cmd.forwardSpeed = 3.0*(*this).cmd.forwardSpeed;
                         }
