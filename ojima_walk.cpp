@@ -121,19 +121,19 @@ void Custom::momoUDPRecv() {
                 //         robot_control = false;
                 //     }
                 // }
-                if (abs((int8_t)buf_ptr[2]) < 10) {
-                    (*this).momo_sideSpeed = 0;
-                    (*this).momo_rotateSpeed = 0;
-                    (*this).momo_forwardSpeed = 0;
-                    (*this).momo_roll  = 0;
-                    (*this).momo_pitch = 0;
-                    (*this).momo_yaw = 0;
-                    (*this).momo_mode = 1;
-                    if (auto_moving_state == 0) {
-                        robot_control = false;
-                    }
-                }
-                else {
+                // if (abs((int8_t)buf_ptr[2]) < 10) {
+                //     (*this).momo_sideSpeed = 0;
+                //     (*this).momo_rotateSpeed = 0;
+                //     (*this).momo_forwardSpeed = 0;
+                //     (*this).momo_roll  = 0;
+                //     (*this).momo_pitch = 0;
+                //     (*this).momo_yaw = 0;
+                //     (*this).momo_mode = 1;
+                //     if (auto_moving_state == 0) {
+                //         robot_control = false;
+                //     }
+                // }
+                // else {
                     (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
                     // (*this).momo_sideSpeed = 0.45 * (int8_t)buf_ptr[2]/127.0;
                     (*this).momo_forwardSpeed = 0.5 * (int8_t)buf_ptr[3]/127.0;
@@ -147,7 +147,7 @@ void Custom::momoUDPRecv() {
                     // (*this).momo_forwardSpeed = 1.0*(int8_t)(buf_ptr[0] & 0x000000ff)/127.0;
                     (*this).momo_mode = 2;
                     robot_control = true;
-                }
+                // }
             }
             else if (buf_ptr[0] == 0xa4) {
                 // double x = 1.0f*(int8_t)buf_ptr[2]/10.0;
