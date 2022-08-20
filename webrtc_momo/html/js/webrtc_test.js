@@ -180,14 +180,17 @@ function prepareNewConnection() {
   peer.addTransceiver('audio', {direction: 'recvonly'});
 
     dataChannel.onmessage = function (event) {
-        if (new Uint8Array(event.data)[0] == 0xa5 && event.data.byteLength == 8) {
+        if (new Uint8Array(event.data)[0] == 0xa5 && event.data.byteLength == 20) {
              recvonly.sendMessage('#sora-devtools', event.data);
              let auto_moving = new Uint8Array(event.data)[1];
              let position_x = (new Int16Array([new Uint8Array(event.data)[2] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[3]])[0] )/100.0;
              let position_z = (new Int16Array([new Uint8Array(event.data)[4] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[5]])[0] )/100.0;
              let position_rot = (new Int16Array([new Uint8Array(event.data)[6] << 8])[0] + new Int16Array([ new Uint8Array(event.data)[7]])[0] )/100.0;
+             let a1_time_since_epoch = (new Int32Array([new Uint8Array(event.data)[8] << 24])[0] + new Int32Array([new Uint8Array(event.data)[9] << 16])[0] + new Int32Array([new Uint8Array(event.data)[10] << 8])[0] + new Int32Array([ new Uint8Array(event.data)[11]])[0] )/1000.0;
+             let a1_forwardSpeed = (new Int32Array([new Uint8Array(event.data)[12] << 24])[0] + new Int32Array([ new Uint8Array(event.data)[13] << 16 ])[0] + new Int32Array([new Uint8Array(event.data)[14] << 8])[0] + new Int32Array([ new Uint8Array(event.data)[15]])[0] )/10000.0;
+             let a1_rotateSpeed = (new Int32Array([new Uint8Array(event.data)[16] << 24])[0] + new Int32Array([ new Uint8Array(event.data)[17] << 16 ])[0] + new Int32Array([new Uint8Array(event.data)[18] << 8])[0] + new Int32Array([ new Uint8Array(event.data)[19]])[0] )/10000.0;
 
-             document.getElementById("sgss").innerHTML = 'auto_moving ' + auto_moving + '\nposition x(m) ' + position_x + '\nposition z(m) ' + position_z + '\nrotation position (deg) ' + position_rot;
+             document.getElementById("sgss").innerHTML = 'auto_moving ' + auto_moving + '\nposition x(m) ' + position_x + '\nposition z(m) ' + position_z + '\nrotation position (deg) ' + position_rot + '\ntime since epoch (s) ' + a1_time_since_epoch + '\nforwardSpeed (m/s) ' + a1_forwardSpeed + '\nrotateSpeed (m/s) ' + a1_rotateSpeed;
         }
     };
 
