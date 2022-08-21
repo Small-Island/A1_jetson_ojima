@@ -248,7 +248,7 @@ void Custom::RobotControl()
     addr.sin_addr.s_addr = inet_addr("192.168.123.12");
     addr.sin_port = htons(4002);
 
-    double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0;
+    double sum_forwardPosition = 0, sum_sidePosition = 0, sum_rotateSpeed = 0, sum_forwardSpeed = 0;
     (*this).rotate_position = 0;
     double old_sum_forwardPosition = 0;
     double position_x = 0, position_z = 0;
@@ -263,6 +263,11 @@ void Custom::RobotControl()
                 sum_sidePosition += highstate.sidePosition;
                 sum_forwardPosition += highstate.forwardPosition;
                 sum_rotateSpeed += highstate.rotateSpeed;
+                sum_forwardSpeed += highstate.forwardSpeed;
+            }
+            else {
+                sum_rotateSpeed = 0;
+                sum_forwardSpeed = 0;
             }
         }
         if (show_count >= 10) {
@@ -290,13 +295,13 @@ void Custom::RobotControl()
             uint8_t hrot = (uint8_t)((uint16_t)(p_rot & 0xff00) >> 8);
             uint8_t lrot = (uint8_t)(p_rot & 0x00ff);
 
-            int fs = (int32_t)(highstate.forwardSpeed * 10000.0);
+            int fs = (int32_t)(sum_forwardSpeed/10.0 * 10000.0);
             uint8_t hhfs = (uint8_t)((uint32_t)(fs & 0xff000000) >> 24);
             uint8_t hfs = (uint8_t)((uint32_t)(fs & 0x00ff0000) >> 16);
             uint8_t lfs = (uint8_t)((uint32_t)(fs & 0x0000ff00) >> 8);
             uint8_t llfs = (uint8_t)(fs & 0x000000ff);
 
-            int rs = (int32_t)(highstate.rotateSpeed * 10000.0);
+            int rs = (int32_t)(sum_rotateSpeed/10.0 * 10000.0);
             uint8_t hhrs = (uint8_t)((uint32_t)(rs & 0xff000000) >> 24);
             uint8_t hrs = (uint8_t)((uint32_t)(rs & 0x00ff0000) >> 16);
             uint8_t lrs = (uint8_t)((uint32_t)(rs & 0x0000ff00) >> 8);
