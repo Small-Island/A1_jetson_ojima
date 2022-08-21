@@ -291,7 +291,7 @@ void Custom::RobotControl()
             uint8_t hz = (uint8_t)((uint16_t)(p_z & 0xff00) >> 8);
             uint8_t lz = (uint8_t)(p_z & 0x00ff);
 
-            int p_rot = rotate_position / M_PI * 180.0 * 100.0;
+            int p_rot = (*this).rotate_position / M_PI * 180.0 * 100.0;
             uint8_t hrot = (uint8_t)((uint16_t)(p_rot & 0xff00) >> 8);
             uint8_t lrot = (uint8_t)(p_rot & 0x00ff);
 
@@ -317,6 +317,7 @@ void Custom::RobotControl()
             sum_forwardPosition = 0;
             sum_sidePosition = 0;
             sum_rotateSpeed = 0;
+            sum_forwardSpeed = 0;
         }
 
         mutex.lock();
