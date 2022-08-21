@@ -301,7 +301,7 @@ void Custom::RobotControl()
             uint8_t lfs = (uint8_t)((uint32_t)(fs & 0x0000ff00) >> 8);
             uint8_t llfs = (uint8_t)(fs & 0x000000ff);
 
-            int rs = (int32_t)(sum_rotateSpeed/10.0 * 10000.0);
+            int rs = (int32_t)(sum_rotateSpeed/10.0/M_PI*180.0 * 10000.0);
             uint8_t hhrs = (uint8_t)((uint32_t)(rs & 0xff000000) >> 24);
             uint8_t hrs = (uint8_t)((uint32_t)(rs & 0x00ff0000) >> 16);
             uint8_t lrs = (uint8_t)((uint32_t)(rs & 0x0000ff00) >> 8);
