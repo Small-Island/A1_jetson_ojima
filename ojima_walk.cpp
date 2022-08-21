@@ -290,7 +290,7 @@ void Custom::RobotControl()
             uint8_t hrot = (uint8_t)((uint16_t)(p_rot & 0xff00) >> 8);
             uint8_t lrot = (uint8_t)(p_rot & 0x00ff);
 
-            int time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1658000000000;
+            int time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1661053890000;
             uint8_t hht = (uint8_t)((uint32_t)(time_since_epoch & 0xff000000) >> 24);
             uint8_t ht = (uint8_t)((uint32_t)(time_since_epoch & 0x00ff0000) >> 16);
             uint8_t lt = (uint8_t)((uint32_t)(time_since_epoch & 0x0000ff00) >> 8);
