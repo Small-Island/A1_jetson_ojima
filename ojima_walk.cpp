@@ -123,7 +123,7 @@ void Custom::momoUDPRecv() {
                 }
                 else {
                     (*this).momo_rotateSpeed = (int8_t)buf_ptr[2]/127.0 * 45.0/120.0;
-                    (*this).momo_sideSpeed = 0.45 * ((int8_t)buf_ptr[2]/127.0 + (int8_t)buf_ptr[3]/127.0);
+                    (*this).momo_sideSpeed = 0.45 * (int8_t)buf_ptr[2]/127.0 * ((int8_t)buf_ptr[3]/127.0 + 1.0);
                     (*this).momo_forwardSpeed = 0.5 * (int8_t)buf_ptr[3]/127.0;
 
                     // (*this).momo_rotateSpeed = 0;
