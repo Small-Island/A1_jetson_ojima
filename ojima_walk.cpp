@@ -290,12 +290,6 @@ void Custom::RobotControl()
             uint8_t hrot = (uint8_t)((uint16_t)(p_rot & 0xff00) >> 8);
             uint8_t lrot = (uint8_t)(p_rot & 0x00ff);
 
-            int time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1661053890000;
-            uint8_t hht = (uint8_t)((uint32_t)(time_since_epoch & 0xff000000) >> 24);
-            uint8_t ht = (uint8_t)((uint32_t)(time_since_epoch & 0x00ff0000) >> 16);
-            uint8_t lt = (uint8_t)((uint32_t)(time_since_epoch & 0x0000ff00) >> 8);
-            uint8_t llt = (uint8_t)(time_since_epoch & 0x000000ff);
-
             int fs = (int32_t)(highstate.forwardSpeed * 10000.0);
             uint8_t hhfs = (uint8_t)((uint32_t)(fs & 0xff000000) >> 24);
             uint8_t hfs = (uint8_t)((uint32_t)(fs & 0x00ff0000) >> 16);
@@ -308,8 +302,8 @@ void Custom::RobotControl()
             uint8_t lrs = (uint8_t)((uint32_t)(rs & 0x0000ff00) >> 8);
             uint8_t llrs = (uint8_t)(rs & 0x000000ff);
 
-            uint8_t buf_ptr[20] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz, hrot, lrot, hht, ht, lt, llt, hhfs, hfs, lfs, llfs, hhrs, hrs, lrs, llrs};
-            sendto(sockfd, buf_ptr, 20*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+            uint8_t buf_ptr[16] = {0xa5, (uint8_t)auto_moving_state, hx, lx, hz, lz, hrot, lrot, hhfs, hfs, lfs, llfs, hhrs, hrs, lrs, llrs};
+            sendto(sockfd, buf_ptr, 16*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             (*this).rotate_position += (sum_rotateSpeed / 10.0)*0.1;
             printf("%d, auto_moving_state %d forwardPosition %.2lf sidePosition %.2lf rotateSpeed %.2lf (deg/sec) rotate_position %.2lf (deg) \n", robot_control, auto_moving_state, sum_forwardPosition / 10.0, sum_sidePosition / 10.0, (sum_rotateSpeed / 10.0) / M_PI * 180.0, (*this).rotate_position / M_PI * 180.0);
             printf("x %.2lf(m) z %.2lf(m) \n", position_x, position_z);

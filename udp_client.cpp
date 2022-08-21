@@ -10,6 +10,7 @@
 #include <sys/fcntl.h>
 #include <thread>
 
+#include <chrono>
 
 void momo_to_x86(void) {
     int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -66,7 +67,12 @@ void x86_to_momo() {
     while (1) {
         uint8_t buf_ptr[100] = {0};
         int recv_size = recv(sockfd, buf_ptr, sizeof(buf_ptr), 0);
-        if (recv_size == 20) {
+        if (recv_size == 16) {
+            int time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1661053890000;
+            buf_ptr[16] = (uint8_t)((uint32_t)(time_since_epoch & 0xff000000) >> 24);
+            buf_ptr[17] = (uint8_t)((uint32_t)(time_since_epoch & 0x00ff0000) >> 16);
+            buf_ptr[18] = (uint8_t)((uint32_t)(time_since_epoch & 0x0000ff00) >> 8);
+            buf_ptr[19] = (uint8_t)(time_since_epoch & 0x000000ff);
             buf_ptr[20] = 10;
             write(fd_write, buf_ptr, 21);
         }
