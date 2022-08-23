@@ -74,7 +74,7 @@ void x86_to_momo() {
             buf_ptr[18] = (uint8_t)((uint32_t)(time_since_epoch & 0x0000ff00) >> 8);
             buf_ptr[19] = (uint8_t)(time_since_epoch & 0x000000ff);
             buf_ptr[20] = 10;
-            write(fd_write, &buf_ptr, 21);
+            write(fd_write, buf_ptr, 21);
         }
     }
 }
