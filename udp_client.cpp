@@ -12,6 +12,8 @@
 
 #include <chrono>
 
+int ltime = 0;
+
 void momo_to_x86(void) {
     int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     struct sockaddr_in addr;
@@ -50,6 +52,11 @@ void momo_to_x86(void) {
             //     sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
             // }
         }
+        else if (read_size  == 5) {
+            if (buf_ptr[0] == 0x96) {
+                ltime = (int)((uint32_t)buf_ptr[1] << 24) + (int)((uint32_t)buf_ptr[2] << 16) + (int)((uint32_t)buf_ptr[3] << 8) + (int)((uint32_t)buf_ptr[4]);
+            }
+        }
 
     }
     close(sockfd);
@@ -68,7 +75,13 @@ void x86_to_momo() {
         uint8_t buf_ptr[100] = {0};
         int recv_size = recv(sockfd, buf_ptr, sizeof(buf_ptr), 0);
         if (recv_size == 16) {
-            uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1661234080000;
+            uint32_t time_since_epoch;
+            if (ltime == 0) {
+                time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1661234080000;
+            }
+            else {
+                time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - 1660000000*1000 - ltime*1000;
+            }
             buf_ptr[16] = (uint8_t)((uint32_t)(time_since_epoch & 0xff000000) >> 24);
             buf_ptr[17] = (uint8_t)((uint32_t)(time_since_epoch & 0x00ff0000) >> 16);
             buf_ptr[18] = (uint8_t)((uint32_t)(time_since_epoch & 0x0000ff00) >> 8);
