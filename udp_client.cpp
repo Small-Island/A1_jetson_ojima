@@ -21,6 +21,12 @@ void momo_to_x86(void) {
     addr.sin_addr.s_addr = inet_addr("192.168.123.161");
     addr.sin_port = htons(4001);
 
+    int sockfd_chair = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in addr_chair;
+    addr_chair.sin_family = AF_INET;
+    addr_chair.sin_addr.s_addr = inet_addr("192.168.11.240");
+    addr_chair.sin_port = htons(4009);
+
     int fd_read = open("./serial_out", O_RDONLY);
     while (1) {
         int req_size = 100*sizeof(uint8_t);
@@ -32,6 +38,10 @@ void momo_to_x86(void) {
         if (read_size == 4) {
             if (buf_ptr[0] == 0xa1) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
+                if (abs((int8_t)buf_ptr[2]) > 10 || abs((int8_t)buf_ptr[3] > 10)) {
+                    uint8_t val[3] = {0xc0};
+                    sendto(sockfd_chair, val, sizeof(uint8_t), 0, (struct sockaddr *)&addr_chair, sizeof(addr_chair));
+                }
             }
             else if (buf_ptr[0] == 0xa4) {
                 sendto(sockfd, buf_ptr, 4*sizeof(uint8_t), 0, (struct sockaddr *)&addr, sizeof(addr));
