@@ -28,6 +28,7 @@ add_executable(ojima_walk examples/ojima_walk.cpp)
 target_link_libraries(ojima_walk ${EXTRA_LIBS})
 
 add_executable(tst examples/tst.cpp)
+target_link_libraries(ojima_walk ${EXTRA_LIBS})
 
 # one pc multi process
 add_executable(lcm_server_high examples/lcm_server_high.cpp)

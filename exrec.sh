@@ -1,0 +1,1 @@
+./exrec > $(date +'%Y-%m%d-%H%M%S').csv
