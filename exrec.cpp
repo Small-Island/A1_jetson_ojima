@@ -12,10 +12,14 @@
 
 #include <chrono>
 
-struct ThreeDOF {
+struct A1Status {
     float lift;
     float roll;
     float pitch;
+    int16_t foot1;
+    int16_t foot2;
+    int16_t foot3;
+    int16_t foot4;
 };
 
 int main(int argc, char* argv[]) {
@@ -32,17 +36,21 @@ int main(int argc, char* argv[]) {
     addr_send.sin_addr.s_addr = inet_addr("192.168.10.205");
     addr_send.sin_port = htons(4123);
 
-    struct ThreeDOF threeDOF;
-    printf("time,lift,roll,pitch\n");
+    struct A1Status a1Status;
+    printf("time,lift,roll,pitch,foot1,foot2,foot3,foot4\n");
     uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     double init_time = time_since_epoch/1000.0;
     while (1) {
-        int recv_size = recv(sockfd_recv, &threeDOF, sizeof(struct ThreeDOF), 0);
+        int recv_size = recv(sockfd_recv, &a1Status, sizeof(struct A1Status), 0);
         uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         double time = time_since_epoch/1000.0 - init_time;
-        printf("%d,%lf,%lf,%lf,%lf\n", recv_size, time, threeDOF.lift, threeDOF.roll, threeDOF.pitch);
+        printf(
+            "%lf,%lf,%lf,%lf,%d,%d,%d,%d\n",
+            time, a1Status.lift, a1Status.roll, a1Status.pitch,
+            a1Status.foot1, a1Status.foot2, a1Status.foot3, a1Status.foot4
+        );
 
-        sendto(sockfd_send, &threeDOF, sizeof(struct ThreeDOF), 0, (struct sockaddr *)&addr_send, sizeof(addr_send));
+        sendto(sockfd_send, &a1Status, sizeof(struct A1Status), 0, (struct sockaddr *)&addr_send, sizeof(addr_send));
 
         sleep(0.1);
     };
