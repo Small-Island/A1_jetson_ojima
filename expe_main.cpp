@@ -138,7 +138,7 @@ void gst_record() {
     printf("%s\n", pipe_proc);
     is_gst_record_playing = true;
     system(pipe_proc);
-    end = 1;
+    is_gst_record_playing = false;
 }
 
 struct A1Status {
