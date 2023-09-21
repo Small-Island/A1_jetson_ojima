@@ -1,4 +1,4 @@
-all: udp_client udp_server tst exrec
+all: udp_client udp_server tst gst_rec expe_main recv_from_x86_send_to_unity
 
 udp_client: udp_client.o
 	g++ udp_client.o -o udp_client -pthread
@@ -15,8 +15,20 @@ udp_server.o: udp_server.cpp
 tst: tst.cpp
 	g++ tst.cpp -o tst
 
-exrec: exrec.o
-	g++ exrec.o -o exrec -pthread
+expe_main: expe_main.o
+	g++ expe_main.o -o expe_main -pthread
 
-exrec.o: exrec.cpp
-	g++ -c exrec.cpp
+expe_main.o: expe_main.cpp
+	g++ -c expe_main.cpp
+
+recv_from_x86_send_to_unity: recv_from_x86_send_to_unity.o
+	g++ recv_from_x86_send_to_unity.o -o recv_from_x86_send_to_unity -pthread
+
+recv_from_x86_send_to_unity.o: recv_from_x86_send_to_unity.cpp
+	g++ -c recv_from_x86_send_to_unity.cpp
+
+gst_rec: gst_rec.o
+	gcc gst_rec.o -o gst_rec -pthread
+
+gst_rec.o: gst_rec.c
+	gcc -c gst_rec.c

@@ -5,3 +5,4 @@ serial_out
 /udp_server
 *.o
 tst
+*.mp4
