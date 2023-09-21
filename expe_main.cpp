@@ -57,6 +57,7 @@ void gst_loopback() {
     char buf[256];
     std::string devID;
     std::string camStatus;
+    memset(buf, 0, sizeof(buf));
     while (fgets(buf, sizeof(buf), fp) != NULL) {
         std::string str = std::string(buf);
         if (str.find("Ricoh") != std::string::npos) {
@@ -66,14 +67,25 @@ void gst_loopback() {
             printf("devID: %s\\n\n", devID.c_str());
             printf("camStatus: %s\\n\n", camStatus.c_str());
         }
+        memset(buf, 0, sizeof(buf));
     }
-    printf("hello");
-    // std::string cid = devID;
-    // std::cout << devID;
-    // printf("----------%s: status-------", cid.c_str());
-    std::string cmd = "fff" + 10;
-    printf("%s", cmd.c_str());
-    // fp = popen('ptpcam --dev=' + cid + ' --show-property=0x5013');
+    std::string cid = devID;
+    printf("----------%s: status-------\n", cid.c_str());
+    std::string cmd = "ptpcam --dev=" + cid + " --show-property=0x5013";
+    printf("%s\n", cmd.c_str());
+    fp = popen(cmd.c_str(), "r");
+    memset(buf, 0, sizeof(buf));
+    while (fgets(buf, sizeof(buf), fp) != NULL) {
+        std::string str = std::string(buf);
+        if (str.find("Ricoh") != std::string::npos) {
+            printf("%s", str.c_str());
+            devID = str.substr(15, 3);
+            camStatus = str.substr(28, 4);
+            printf("devID: %s\\n\n", devID.c_str());
+            printf("camStatus: %s\\n\n", camStatus.c_str());
+        }
+        memset(buf, 0, sizeof(buf));
+    }
     // system("/home/tristar/MyWork-NX4_6/AutoRun_gst_loopback.py");
 }
 
