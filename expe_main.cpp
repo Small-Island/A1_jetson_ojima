@@ -116,12 +116,18 @@ void gst_loopback() {
     }
 }
 
-bool is_gst_record_playing = false;
+bool is_gst_recording = false;
+uint32_t gst_record_start_time = 0;
+
+time_t t;
+struct tm tm;
+
+void get_today() {
+    t = time(NULL);
+    localtime_r(&t, &tm);
+}
 
 void gst_record() {
-    time_t t = time(NULL);
-    struct tm tm;
-    localtime_r(&t, &tm);
     char pipe_proc[300];
     sprintf(
         pipe_proc,
@@ -136,9 +142,27 @@ void gst_record() {
         tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec
     );
     printf("%s\n", pipe_proc);
-    is_gst_record_playing = true;
+    is_gst_recording = true;
+    gst_record_start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     system(pipe_proc);
-    is_gst_record_playing = false;
+    is_gst_recording = false;
+}
+
+uint32_t a1_record_start_time = 0;
+bool is_a1_recording = false;
+
+void observe_gst_record() {
+    while (1) {
+        if (is_gst_recording) {
+            uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            if (time_since_epoch - gst_record_start_time > 260) {
+                a1_record_start_time = time_since_epoch;
+                is_a1_recording = true;
+                printf("A1 Record Started\n");
+                return;
+            }
+        }
+    }
 }
 
 struct A1Status {
@@ -160,27 +184,42 @@ void udp_recv_from_x86(void) {
     bind(sockfd_recv, (const struct sockaddr *)&addr_recv, sizeof(addr_recv));
 
     struct A1Status a1Status;
-    printf("time,lift,roll,pitch,foot1,foot2,foot3,foot4\n");
-    uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    double init_time = time_since_epoch/1000.0;
+    char filename[256];
+    sprintf(
+        filename,
+        "%04d-%02d%02d-%02d%02d%02d.csv",
+        tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec
+    );
+    FILE* fp = fopen(filename, "w");
+    fprintf(fp, "time,lift,roll,pitch,foot1,foot2,foot3,foot4\n");
     while (1) {
         int recv_size = recv(sockfd_recv, &a1Status, sizeof(struct A1Status), 0);
-        uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        double time = time_since_epoch/1000.0 - init_time;
-        // printf(
-        //     "%lf,%lf,%lf,%lf,%d,%d,%d,%d\n",
-        //     time, a1Status.lift, a1Status.roll, a1Status.pitch,
-        //     a1Status.foot1, a1Status.foot2, a1Status.foot3, a1Status.foot4
-        // );
+        if (is_a1_recording && is_gst_recording) {
+            uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            double time = time_since_epoch/1000.0 - a1_record_start_time/1000.0;
+            fprintf(
+                fp,
+                "%lf,%lf,%lf,%lf,%d,%d,%d,%d\n",
+                time, a1Status.lift, a1Status.roll, a1Status.pitch,
+                a1Status.foot1, a1Status.foot2, a1Status.foot3, a1Status.foot4
+            );
+        }
+        if (!is_gst_recording && is_a1_recording) {
+            is_a1_recording = false;
+            fclose(fp);
+        }
     };
 }
 
 
 int main(int argc, char* argv[]) {
-    cameraSetting();
+    get_today();
+    std::thread th_observe_gst_record(observe_gst_record);
     std::thread th_udp_recv_from_x86(udp_recv_from_x86);
-    std::thread th_gst_loopback(gst_loopback);
+    cameraSetting();
     sleep(3);
+    std::thread th_gst_loopback(gst_loopback);
+    sleep(5);
     std::thread th_gst_record(gst_record);
     while (1) {
         sleep(10);
