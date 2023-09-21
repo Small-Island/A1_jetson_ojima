@@ -52,7 +52,7 @@ void udp_recv_from_x86(void) {
 
 int end = 0;
 
-void gst_loopback() {
+void cameraSetting() {
     FILE* fp = popen("lsusb", "r");
     char buf[256];
     std::string devID;
@@ -75,18 +75,80 @@ void gst_loopback() {
     printf("%s\n", cmd.c_str());
     fp = popen(cmd.c_str(), "r");
     memset(buf, 0, sizeof(buf));
+    bool captureMode = false;
+    FILE* fpw = NULL;
+    FILE* fpl = NULL;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
         std::string str = std::string(buf);
-        if (str.find("Ricoh") != std::string::npos) {
-            printf("%s", str.c_str());
-            devID = str.substr(15, 3);
-            camStatus = str.substr(28, 4);
-            printf("devID: %s\\n\n", devID.c_str());
-            printf("camStatus: %s\\n\n", camStatus.c_str());
+        printf("%s", str.c_str());
+        if (str.find("ERROR") != std::string::npos) {
+            printf("Wake up\n");
+            std::string cmd2 = "ptpcam --dev=" + cid + " --set-property=0xD80E --val=0x00";
+            printf("%s\n", cmd2.c_str());
+            fpw = popen(cmd2.c_str(), "r");
+            char bufw[256];
+            memset(bufw, 0, sizeof(bufw));
+            while (fgets(bufw, sizeof(bufw), fpw) != NULL) {
+                printf("%s", bufw);
+            }
+            printf("set live mode");
+			std::string cmd3 = "ptpcam --dev=" + cid + " --set-property=0x5013 --val=0x8005";
+            printf("%s\n", cmd3.c_str());
+            fpl = popen(cmd3.c_str(), "r");
+            char bufl[256];
+            memset(bufl, 0, sizeof(bufl));
+            while (fgets(bufl, sizeof(bufl), fpl) != NULL) {
+                printf("%s", bufl);
+            }
+        }
+        if (str.find("Capture") != std::string::npos) {
+            captureMode = true;
         }
         memset(buf, 0, sizeof(buf));
     }
+    if (!captureMode) {
+        printf("set live mode");
+        std::string cmd3 = "ptpcam --dev=" + cid + " --set-property=0x5013 --val=0x8005";
+        printf("%s\n", cmd3.c_str());
+        fpl = popen(cmd3.c_str(), "r");
+        char bufl[256];
+        memset(bufl, 0, sizeof(bufl));
+        while (fgets(bufl, sizeof(bufl), fpl) != NULL) {
+            printf("%s", bufl);
+        }
+    }
+
+    if (fp != NULL) {
+        pclose(fp);
+    }
+    if (fpw != NULL) {
+        pclose(fpw);
+    }
+    if (fpl != NULL) {
+        pclose(fpl);
+    }
+
     // system("/home/tristar/MyWork-NX4_6/AutoRun_gst_loopback.py");
+}
+
+bool runTheta0 = false;
+
+void gst_loopback() {
+    std::string cam0 = "/home/tristar/MyWork-NX4_6/THETA_Cameras/camera0/gst_loopback";
+    bool runTheta0 = true;
+    printf("Open THETA0");
+	FILE* fp0 = popen(cam0.c_str(), "r");
+    char buf[256];
+    memset(buf, 0, sizeof(buf));
+    while (runTheta0) {
+        while (fgets(buf, sizeof(buf), fp0) != NULL) {
+            printf("%s", buf);
+        }
+        sleep(5);
+    }
+    if (fp0 != NULL) {
+        pclose(fp0);
+    }
 }
 
 void gst_record() {
@@ -113,10 +175,11 @@ void gst_record() {
 
 
 int main(int argc, char* argv[]) {
-    // std::thread th_udp_recv_from_x86(udp_recv_from_x86);
+    cameraSetting();
+    std::thread th_udp_recv_from_x86(udp_recv_from_x86);
     std::thread th_gst_loopback(gst_loopback);
-    // sleep(15);
-    // std::thread th_gst_record(gst_record);
+    sleep(3);
+    std::thread th_gst_record(gst_record);
     while (1) {
         sleep(10);
     }
