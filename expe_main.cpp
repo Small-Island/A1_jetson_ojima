@@ -173,6 +173,9 @@ struct A1Status {
     int16_t foot2;
     int16_t foot3;
     int16_t foot4;
+    float forwardSpeed;
+    float rotateSpeed;
+    float sideSpeed;
 };
 
 void udp_recv_from_x86(void) {
@@ -191,7 +194,13 @@ void udp_recv_from_x86(void) {
         tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec
     );
     FILE* fp = fopen(filename, "w");
-    fprintf(fp, "time,lift,roll,pitch,foot1,foot2,foot3,foot4\n");
+    fprintf(
+        fp,
+        "Time,"
+        "Lift (cm),Roll (deg),Pitch (deg),"
+        "Front right,Front left,Rear rigtht,Rear left,"
+        "Forward velocity (m/s),Side velocity(m/s),Rotate velocity(deg/s)\n"
+    );
     while (1) {
         int recv_size = recv(sockfd_recv, &a1Status, sizeof(struct A1Status), 0);
         if (is_a1_recording && is_gst_recording) {
@@ -199,9 +208,10 @@ void udp_recv_from_x86(void) {
             double time = time_since_epoch/1000.0 - a1_record_start_time/1000.0;
             fprintf(
                 fp,
-                "%lf,%lf,%lf,%lf,%d,%d,%d,%d\n",
+                "%lf,%lf,%lf,%lf,%d,%d,%d,%d,%lf,%lf,%lf\n",
                 time, a1Status.lift, a1Status.roll, a1Status.pitch,
-                a1Status.foot1, a1Status.foot2, a1Status.foot3, a1Status.foot4
+                a1Status.foot1, a1Status.foot2, a1Status.foot3, a1Status.foot4,
+                a1Status.forwardSpeed, a1Status.sideSpeed, a1Status.rotateSpeed
             );
         }
         if (!is_gst_recording && is_a1_recording) {
