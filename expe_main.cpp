@@ -151,15 +151,44 @@ void gst_record() {
 uint32_t a1_record_start_time = 0;
 bool is_a1_recording = false;
 
+struct A1MovingProfile {
+    float topVelocity; // (m/s)
+    float accel; // (m/s/s)
+    float topVelocityDuration; // (sec)
+};
+
 void observe_gst_record() {
     while (1) {
         if (is_gst_recording) {
             uint32_t time_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-            if (time_since_epoch - gst_record_start_time > 260) {
-                a1_record_start_time = time_since_epoch;
-                is_a1_recording = true;
-                printf("A1 Record Started\n");
-                return;
+            if (!is_a1_recording) {
+                if (time_since_epoch - gst_record_start_time > 260) {
+                    a1_record_start_time = time_since_epoch;
+                    is_a1_recording = true;
+                    printf("A1 Record Started\n");
+                }
+            }
+            else  {
+                if (time_since_epoch - a1_record_start_time > 1000) {
+                    int sockfd_send = socket(AF_INET, SOCK_DGRAM, 0);
+                    struct sockaddr_in addr_send;
+                    addr_send.sin_family = AF_INET;
+                    addr_send.sin_addr.s_addr = inet_addr("192.168.123.161");
+                    addr_send.sin_port = htons(4123);
+                    struct A1MovingProfile a1MovingProfile;
+                    a1MovingProfile.topVelocity = 0.4;
+                    a1MovingProfile.accel = 0.2;
+                    a1MovingProfile.topVelocityDuration = 3;
+                    sendto(
+                        sockfd_send,
+                        &a1MovingProfile,
+                        sizeof(struct A1MovingProfile),
+                        0,
+                        (struct sockaddr *)&addr_send,
+                        sizeof(addr_send)
+                    );
+                    return;
+                }
             }
         }
     }
